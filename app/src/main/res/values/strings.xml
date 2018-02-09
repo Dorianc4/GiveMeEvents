@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">Give Me Events</string>
+    <string name="facebook_app_id">343453109505479</string>
+    <string name="fb_login_protocol_scheme">fb343453109505479</string>
+    <string name="fb_graph_url">https://graph.facebook.com/</string>
+    <string name="fb_graph_url_search">/search</string>
+    <string name="fb_graph_field_id">id</string>
+    <string name="fb_graph_field_ids">ids</string>
+    <string name="fb_graph_field_events">events</string>
+    <string name="fb_graph_field_fields">fields</string>
+    <string name="fb_graph_field_since">since</string>
+    <string name="fb_graph_field_until">until</string>
+    <string name="fb_graph_type_place">place</string>
+    <string name="fb_graph_field_eventfields">id,type,name,cover.fields(id,source),picture.type(large),description,start_time,end_time,category,attending_count,declined_count,interested_count,maybe_count,noreply_count,ticket_uri,ticketing_privacy_uri,ticketing_terms_uri,place.fields(id,name,location{city,country,latitude,longitude,state,street,zip})</string>
+    <string name="fb_graph_field_placefields">id,name,about,emails,cover.fields(id,source),picture.type(large),category,category_list.fields(name),location{city,country,latitude,longitude,state,street,zip},events.fields({field_evt}) </string>
+    <string name="fb_logout_msg">Are you sure you want to logout?</string>
+    <string-array name="fb_graph_field_categories">
+        <item>ARTS_ENTERTAINMENT</item>
+        <item>EDUCATION</item>
+        <item>FITNESS_RECREATION</item>
+        <item>FOOD_BEVERAGE</item>
+        <item>HOTEL_LODGING</item>
+        <item>MEDICAL_HEALTH</item>
+        <item>SHOPPING_RETAIL</item>
+        <item>TRAVEL_TRANSPORTATION</item>
+    </string-array>
+    <string-array name="fb_graph_events_fields">
+        <item>id</item>
+        <item>type</item>
+        <item>name</item>
+        <item>cover.fields(id,source)</item>
+        <item>picture.type(large)</item>
+        <item>description</item>
+        <item>start_time</item>
+        <item>end_time</item>
+        <item>category</item>
+        <item>attending_count</item>
+        <item>declined_count</item>
+        <item>interested_count</item>
+        <item>maybe_count</item>
+        <item>noreply_count</item>
+        <item>ticket_uri</item>
+        <item>ticketing_privacy_uri</item>
+        <item>ticketing_terms_uri</item>
+        <item>place.fields(id,name,location{city,country,latitude,longitude,state,street,zip})</item>
+        <item>is_canceled</item>
+        <item>is_draft</item>
+    </string-array>
+    <string-array name="fb_graph_place_fields">
+        <item>id</item>
+        <item>name</item>
+        <item>about</item>
+        <item>emails</item>
+        <item>cover.fields(id,source)</item>
+        <item>picture.type(large)</item>
+        <item>category</item>
+        <item>category_list.fields(name)</item>
+        <item>location{city,country,latitude,longitude,state,street,zip}</item>
+        <item>events.fields({field_evt})</item>
+    </string-array>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+
+    <!--BUTTONS-->
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <string name="permission_denied">Permission denied</string>
+    <string name="prefs_name">it.unical.givemeevents.Shared_Preferences</string>
+    <string name="last_location">lastLocation</string>
+    <string name="my_location_msg">My location</string>
+    <string name="search_msg">Filter Search</string>
+    <string name="location_active_msg">Location service not active. Do you want to active it?</string>
+    <string name="distance_label">Distance</string>
+    <string-array name="distances_array_filter">
+        <item>500 M</item>
+        <item>1 KM</item>
+        <item>5 KM</item>
+        <item>10 KM</item>
+        <item>15 KM</item>
+        <item>20 KM</item>
+    </string-array>
+    <string-array name="fb_graph_categories_filter">
+        <item>Arts &amp; Entertaiment</item>
+        <item>Education</item>
+        <item>Fitness &amp; Recreation</item>
+        <item>Food &amp; Beverage</item>
+        <item>Hotel &amp; Lodging</item>
+        <item>Medical &amp; Health</item>
+        <item>Shopping &amp; Retail</item>
+        <item>Travel &amp; Transportation</item>
+    </string-array>
+</resources>
