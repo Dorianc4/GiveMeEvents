@@ -14,6 +14,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -284,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestLocation();
         } else if (id == R.id.action_search) {
             FilterSearchDialog fDialog = FilterSearchDialog.newInstance();
+            fDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme);
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (isLargeLayout) {
                 fDialog.show(fragmentManager, "dialog");
@@ -295,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 // To make it fullscreen, use the 'content' root view as the container
                 // for the fragment, which is always the root view for the activity
-                transaction.add(android.R.id.content, fDialog)
+                transaction.add(R.id.drawer_layout, fDialog)
                         .addToBackStack(null).commit();
             }
 

@@ -1,6 +1,5 @@
 package it.unical.givemeevents.gui;
 
-
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,8 +9,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -46,6 +52,29 @@ public class FilterSearchDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);\
         View view = inflater.inflate(R.layout.search_filter_dialog, container, false);
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar_dialog_search);
+        toolbar.setTitle(getActivity().getString(R.string.search_msg));
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        ActionBar actionbar =  ((AppCompatActivity)getActivity()).getSupportActionBar();
+//        if(actionbar!=null){
+//            actionbar.setDisplayHomeAsUpEnabled(true);
+//            actionbar.setHomeButtonEnabled(true);
+//            actionbar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
+//        }
+        toolbar.inflateMenu(R.menu.search_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.id_find_menu) {
+                    Log.d("CLICKMENU", item.getItemId() + "");
+                    dismiss();
+                }
+                return false;
+            }
+        });
+        setHasOptionsMenu(true);
+
         final EditText since = view.findViewById(R.id.editTextSince);
         final EditText until = view.findViewById(R.id.editTextUntil);
         since.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +115,7 @@ public class FilterSearchDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return super.onCreateDialog(savedInstanceState);
+//        return super.onCreateDialog(savedInstanceState);
 //        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 //        View view = getActivity().getLayoutInflater().inflate(R.layout.search_filter_dialog, null);
 //
@@ -123,8 +152,10 @@ public class FilterSearchDialog extends DialogFragment {
 //            }
 //        });
 //        // Create the AlertDialog object and return it
-//        Dialog dialog =  super.onCreateDialog(savedInstanceState);
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        return dialog;
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
+
+
 }
