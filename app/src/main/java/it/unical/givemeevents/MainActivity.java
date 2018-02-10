@@ -1,6 +1,7 @@
 package it.unical.givemeevents;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -35,6 +37,8 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
 
@@ -53,6 +57,7 @@ import it.unical.givemeevents.util.GiveMeEventUtils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "MainActivity";
     private TextView textView;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
@@ -378,6 +383,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             adapter.removeAllEvents();
         }
 
+    }
+    public boolean isServicesOK(){
+        Log.d(TAG, "isServicesOK: checking google services version");
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MainActivity.this);
+        if(available == ConnectionResult.SUCCESS){
+            Log.d(TAG, "isServicesOK: Google Play Services are working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occured but we can relve it
+            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, available, 100);
+            dialog.show();
+        }else{
+            Toast.makeText(this, "We can't make map request", Toast.LENGTH_SHORT).show();
+
+        }
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////
