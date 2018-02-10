@@ -1,6 +1,7 @@
 package it.unical.givemeevents.gui;
 
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,10 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import it.unical.givemeevents.R;
+import it.unical.givemeevents.util.GiveMeEventUtils;
 
 /**
  * Created by Manuel on 9/2/2018.
@@ -36,8 +44,42 @@ public class FilterSearchDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
+//        return super.onCreateView(inflater, container, savedInstanceState);\
         View view = inflater.inflate(R.layout.search_filter_dialog, container, false);
+        final EditText since = view.findViewById(R.id.editTextSince);
+        final EditText until = view.findViewById(R.id.editTextUntil);
+        since.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog picker = GiveMeEventUtils.showDatePicker(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int date) {
+                        Calendar cal = new GregorianCalendar(year, month, date);
+                        since.setText(GiveMeEventUtils.createStringfromDate(cal.getTime(), "dd/MM/yyyy"));
+                    }
+                });
+                if (picker != null) {
+                    picker.getDatePicker().setMinDate(new Date().getTime());
+                }
+            }
+        });
+        until.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog picker = GiveMeEventUtils.showDatePicker(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int date) {
+                        Calendar cal = new GregorianCalendar(year, month, date);
+                        until.setText(GiveMeEventUtils.createStringfromDate(cal.getTime(), "dd/MM/yyyy"));
+                    }
+                });
+                if (picker != null) {
+                    Calendar cal = new GregorianCalendar();
+                    cal.add(Calendar.DATE, 1);
+                    picker.getDatePicker().setMinDate(cal.getTime().getTime());
+                }
+            }
+        });
 
         return view;
     }

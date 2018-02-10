@@ -1,10 +1,17 @@
 package it.unical.givemeevents.util;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.widget.Toast;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import it.unical.givemeevents.R;
 
@@ -79,6 +86,38 @@ public class GiveMeEventUtils {
             editor.putBoolean(name, value);
             editor.commit();
         }
+    }
+
+    public static DatePickerDialog showDatePicker(Context ctx, DatePickerDialog.OnDateSetListener listener) {
+        if (ctx != null && listener != null) {
+            Calendar date = new GregorianCalendar();
+            DatePickerDialog picker = new DatePickerDialog(ctx, listener, date.get(Calendar.YEAR), date.get(Calendar.MONTH),
+                    date.get(Calendar.DAY_OF_MONTH));
+            picker.show();
+            return picker;
+        }
+        return null;
+    }
+
+    public static Date createDateFromString(String date) {
+        if (date != null) {
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                return sd.parse(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public static String createStringfromDate(Date date, String pattern) {
+        if (date != null) {
+            SimpleDateFormat sd = new SimpleDateFormat(pattern);
+            return sd.format(date);
+        }
+        return "";
     }
 
 

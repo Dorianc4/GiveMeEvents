@@ -94,4 +94,12 @@
         <item>Shopping &amp; Retail</item>
         <item>Travel &amp; Transportation</item>
     </string-array>
+    <string name="arts_cat">Arts &amp; Entertaiment</string>
+    <string name="education_cat">Education</string>
+    <string name="fitness_cat">Fitness &amp; Recreation</string>
+    <string name="food_cat">Food &amp; Beverage</string>
+    <string name="hotel_cat">Hotel &amp; Lodging</string>
+    <string name="medical_cat">Medical &amp; Health</string>
+    <string name="shop_cat">Shopping &amp; Retail</string>
+    <string name="travel_cat">Travel &amp; Transportation</string>
 </resources>

@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected List<FacebookEvent> doInBackground(Void[] objects) {
                 if (!this.isCancelled()) {
                     GraphSearchData sd = new GraphSearchData();
-                    sd.setDistance(10000);
+                    sd.setDistance(1000);
                     sd.setLatitud(latitude);//39.3650216,16.223529
                     sd.setLongitud(longitude);
                     sd.setLimit(100);
