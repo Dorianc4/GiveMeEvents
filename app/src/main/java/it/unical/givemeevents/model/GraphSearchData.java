@@ -1,28 +1,35 @@
 package it.unical.givemeevents.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Manuel on 6/12/2017.
  */
 
-public class GraphSearchData {
+public class GraphSearchData implements Serializable {
 
-    private double latitud,longitud;
+    private double latitud, longitud;
     private String query;
-    private int distance,limit;
-    private Date since,until;
+    private int distance, limit;
+    private Date since, until;
     private boolean showActiveOnly;
     private String authToken;
     private String[] categories;
 
-    public GraphSearchData(float latitud, float longitud, String query, int distance, int limit, Date since, Date until, boolean showActiveOnly, String[] categories , String authToken) {
+    public GraphSearchData(int distance, String[] categories) {
+        this.distance = distance;
+        this.categories = categories;
+    }
+
+    public GraphSearchData(float latitud, float longitud, String query, int distance, int limit, Date since, Date until, boolean showActiveOnly, String[] categories, String authToken) {
         this.latitud = latitud;
         this.longitud = longitud;
         this.query = query;
         this.distance = distance;
         this.limit = limit;
         this.since = since;
+
         this.until = until;
         this.showActiveOnly = showActiveOnly;
         this.authToken = authToken;
@@ -31,7 +38,7 @@ public class GraphSearchData {
     }
 
     public GraphSearchData() {
-        this.distance = 100;
+        this.distance = 500;
 //        this.categories = new String[]{"ARTS_ENTERTAINMENT", "EDUCATION", "FITNESS_RECREATION", "FOOD_BEVERAGE", "HOTEL_LODGING", "MEDICAL_HEALTH", "SHOPPING_RETAIL", "TRAVEL_TRANSPORTATION"};
     }
 
@@ -68,6 +75,9 @@ public class GraphSearchData {
     }
 
     public int getDistance() {
+        if (distance == 0) {
+            return 500;
+        }
         return distance;
     }
 
@@ -76,6 +86,9 @@ public class GraphSearchData {
     }
 
     public int getLimit() {
+        if (limit == 0) {
+            return 100;
+        }
         return limit;
     }
 
@@ -84,7 +97,7 @@ public class GraphSearchData {
     }
 
     public Date getSince() {
-        if(since==null)
+        if (since == null)
             return new Date();
         return since;
     }
@@ -109,8 +122,8 @@ public class GraphSearchData {
         this.showActiveOnly = showActiveOnly;
     }
 
-    public String getCenter(){
-        return getLatitud()+","+getLongitud();
+    public String getCenter() {
+        return getLatitud() + "," + getLongitud();
     }
 
     public String[] getCategories() {

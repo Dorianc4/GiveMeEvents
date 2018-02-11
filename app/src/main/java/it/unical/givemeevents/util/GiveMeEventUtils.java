@@ -112,6 +112,19 @@ public class GiveMeEventUtils {
         return null;
     }
 
+    public static Date createDateFromString(String date, String pattern) {
+        if (date != null && pattern != null && !pattern.isEmpty()) {
+            SimpleDateFormat sd = new SimpleDateFormat(pattern);
+            try {
+                return sd.parse(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
+
     public static String createStringfromDate(Date date, String pattern) {
         if (date != null) {
             SimpleDateFormat sd = new SimpleDateFormat(pattern);

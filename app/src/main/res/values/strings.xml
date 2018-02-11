@@ -21,8 +21,8 @@
         <item>FOOD_BEVERAGE</item>
         <item>HOTEL_LODGING</item>
         <item>MEDICAL_HEALTH</item>
-        <item>SHOPPING_RETAIL</item>
         <item>TRAVEL_TRANSPORTATION</item>
+        <item>SHOPPING_RETAIL</item>
     </string-array>
     <string-array name="fb_graph_events_fields">
         <item>id</item>
@@ -81,8 +81,6 @@
         <item>1 KM</item>
         <item>5 KM</item>
         <item>10 KM</item>
-        <item>15 KM</item>
-        <item>20 KM</item>
     </string-array>
     <string-array name="fb_graph_categories_filter">
         <item>Arts &amp; Entertaiment</item>

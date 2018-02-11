@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LocationListener locListener;
     private AsyncTask<Void, List<FacebookEvent>, List<FacebookEvent>> asyncFindEvents;
     private boolean isLargeLayout;
+    private GraphSearchData gsd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +101,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         locListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                perform(location.getLatitude(), location.getLongitude());
+                gsd.setLatitud(location.getLatitude());
+                gsd.setLongitud(location.getLongitude());
+                perform();
                 locManager.removeUpdates(this);
             }
 
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         ///////////////////////////////////////////////////////////
-
+        gsd = new GraphSearchData(500, getResources().getStringArray(R.array.fb_graph_field_categories));
         eventsList = (ListView) findViewById(R.id.eventsList);
         adapter = new EventAdapter(this, new ArrayList<FacebookEvent>());
         eventsList.setAdapter(adapter);
@@ -146,12 +149,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String lastLoc = GiveMeEventUtils.getPreferences(this).getString(getString(R.string.last_location), null);
             if (locManager.isLocationEnabled() && locManager.getLastKnownLocation() != null) {
                 //perform con estas coordenadas
-                Location loc = locManager.getLastKnownLocation();
-                perform(loc.getLatitude(), loc.getLongitude());
+                Location location = locManager.getLastKnownLocation();
+                gsd.setLatitud(location.getLatitude());
+                gsd.setLongitud(location.getLongitude());
+                perform();
+//                perform(loc.getLatitude(), loc.getLongitude());
             } else if (lastLoc != null && !lastLoc.isEmpty()) {
                 //perform con estas coordenadas
                 String[] aux = lastLoc.split(",");
-                perform(Double.parseDouble(aux[0]), Double.parseDouble(aux[1]));
+                gsd.setLatitud(Double.parseDouble(aux[0]));
+                gsd.setLongitud(Double.parseDouble(aux[1]));
+                perform();
+//                perform(, );
             } else {
 //                locManager.isLocationEnabled()
 //                locManager.getLocation(locListener);
@@ -160,9 +169,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void perform(final double latitude, final double longitude) {
+    public void performExternal(GraphSearchData graph) {
+        if (graph != null) {
+            if (graph.getLongitud() == 0) {
+                graph.setLongitud(gsd.getLongitud());
+            }
+            if (graph.getLatitud() == 0) {
+                graph.setLatitud(gsd.getLatitud());
+            }
+            gsd = graph;
+            perform();
+        }
+    }
+
+    private void perform() {
         final FacebookGraphManager graphManager = ((GiveMeEventApplication) getApplication()).getFacebookGraphManager();
-        GiveMeEventUtils.setPreference(this, getString(R.string.last_location), latitude + "," + longitude);
+        GiveMeEventUtils.setPreference(this, getString(R.string.last_location), gsd.getLatitud() + "," + gsd.getLongitud());
         if (asyncFindEvents != null && asyncFindEvents.getStatus() == AsyncTask.Status.RUNNING) {
             asyncFindEvents.cancel(true);
         }
@@ -171,24 +193,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected List<FacebookEvent> doInBackground(Void[] objects) {
                 if (!this.isCancelled()) {
-                    GraphSearchData sd = new GraphSearchData();
-                    sd.setDistance(1000);
-                    sd.setLatitud(latitude);//39.3650216,16.223529
-                    sd.setLongitud(longitude);
-                    sd.setLimit(100);
-                    sd.setSince(new Date());
-//                    sd.setUntil(new Date(1518479940000L));
-//                        sd.setQuery("CUS");
-                    sd.setCategories(new String[]{"ARTS_ENTERTAINMENT",
-                            "EDUCATION",
-                            "FITNESS_RECREATION",
-                            "FOOD_BEVERAGE",
-                            "HOTEL_LODGING",
-                            "MEDICAL_HEALTH",
-                            "SHOPPING_RETAIL",
-                            "TRAVEL_TRANSPORTATION"});
 
-                    List<String> ids = graphManager.findPlacesId(sd);
+
+                    List<String> ids = graphManager.findPlacesId(gsd);
 //                adapter = new EventAdapter(MainActivity.this, new ArrayList<FacebookEvent>());
                     Log.d("CANTIDAD", ids.size() + "");
                     try {
@@ -202,20 +209,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                        }
 
                         if (ids.size() <= 50) {
-                            List<FacebookEvent> b = graphManager.findEvents(ids, sd);
+                            List<FacebookEvent> b = graphManager.findEvents(ids, gsd);
 //                            Log.d("PLACE", a.get(i));
                             publishProgress(b);
                         } else {
                             int count = 0;
                             for (int i = 0; i < (ids.size() - 50); i += 50) {
 //                                String idsTemp = ids.subList(i, i + 50).toString();
-                                List<FacebookEvent> b = graphManager.findEvents(ids.subList(i, i + 50), sd);
+                                List<FacebookEvent> b = graphManager.findEvents(ids.subList(i, i + 50), gsd);
                                 publishProgress(b);
                             }
                             if (ids.size() % 50 != 0) {
 //                    Log.d("QUANTITY", ids.subList(50*(idsSize/50), idsSize).size()+"");
                                 String idsTemp = ids.subList(50 * (ids.size() / 50), ids.size()).toString();
-                                List<FacebookEvent> b = graphManager.findEvents(ids.subList(50 * (ids.size() / 50), ids.size()), sd);
+                                List<FacebookEvent> b = graphManager.findEvents(ids.subList(50 * (ids.size() / 50), ids.size()), gsd);
                                 publishProgress(b);
                             }
                         }
@@ -285,6 +292,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestLocation();
         } else if (id == R.id.action_search) {
             FilterSearchDialog fDialog = FilterSearchDialog.newInstance();
+            Bundle b = new Bundle();
+            b.putSerializable("search", gsd);
+            fDialog.setArguments(b);
             fDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme);
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (isLargeLayout) {
@@ -386,19 +396,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
-    public boolean isServicesOK(){
+
+    public boolean isServicesOK() {
         Log.d(TAG, "isServicesOK: checking google services version");
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MainActivity.this);
-        if(available == ConnectionResult.SUCCESS){
+        if (available == ConnectionResult.SUCCESS) {
             Log.d(TAG, "isServicesOK: Google Play Services are working");
             return true;
-        }
-        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             //an error occured but we can relve it
             Log.d(TAG, "isServicesOK: an error occured but we can fix it");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, available, 100);
             dialog.show();
-        }else{
+        } else {
             Toast.makeText(this, "We can't make map request", Toast.LENGTH_SHORT).show();
 
         }

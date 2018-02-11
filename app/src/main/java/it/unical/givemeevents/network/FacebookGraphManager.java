@@ -8,15 +8,18 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import it.unical.givemeevents.BuildConfig;
 import it.unical.givemeevents.R;
 import it.unical.givemeevents.model.FacebookEvent;
@@ -120,7 +123,7 @@ public class FacebookGraphManager {
         Bundle params = new Bundle();
         params.putString("center", searchData.getCenter());
         params.putString("distance", searchData.getDistance() + "");
-        params.putString("limit", "100");//REVISAR ESTO PARA VER COMO SE PUEDE IMPLEMENTAR UN PAGINADO
+        params.putString("limit", "200");//REVISAR ESTO PARA VER COMO SE PUEDE IMPLEMENTAR UN PAGINADO
         params.putString("q", (searchData.getQuery() != null) ? searchData.getQuery() : "");
         params.putString("fields", ctx.getString(R.string.fb_graph_field_id));
         params.putString("type", ctx.getString(R.string.fb_graph_type_place));
@@ -144,6 +147,8 @@ public class FacebookGraphManager {
 //                        Log.d("CATEGORY", ((JSONObject) array.get(i)).getString("category"));
                     }
                 }
+            } else {
+                Log.e("API ERROR", resp.getError().getErrorMessage());
             }
             request = resp.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
         } while (request != null);
@@ -173,9 +178,9 @@ public class FacebookGraphManager {
                 int count = 0;
                 params.putString(ctx.getString(R.string.fb_graph_field_fields), fields);
 //                JSONObject jsonMix = new JSONObject();
-                for (int i = 0; i < (idsSize-50); i += 50) {
+                for (int i = 0; i < (idsSize - 50); i += 50) {
 //                    Log.d("QUANTITY", ids.subList(i, i+50).size()+"");
-                    String idsTemp = ids.subList(i, i+50).toString();
+                    String idsTemp = ids.subList(i, i + 50).toString();
                     params.putString(ctx.getString(R.string.fb_graph_field_ids), idsTemp.substring(1, idsTemp.length() - 1));
 //                    JSONObject jsonResp = findEventsAux(params);
 //                    addJsonWithEvents(data, jsonResp);
@@ -183,7 +188,7 @@ public class FacebookGraphManager {
                 }
                 if (idsSize % 50 != 0) {
 //                    Log.d("QUANTITY", ids.subList(50*(idsSize/50), idsSize).size()+"");
-                    String idsTemp = ids.subList(50*(idsSize/50), idsSize).toString();
+                    String idsTemp = ids.subList(50 * (idsSize / 50), idsSize).toString();
                     params.putString(ctx.getString(R.string.fb_graph_field_ids), idsTemp.substring(1, idsTemp.length() - 1));
 //                    JSONObject jsonResp = findEventsAux(params);
 //                    addJsonWithEvents(data, jsonResp);
@@ -198,7 +203,7 @@ public class FacebookGraphManager {
         Iterator<?> keys = js2.keys();
         while (keys.hasNext()) {
             String key = (String) keys.next();
-            if(js2.getJSONObject(key).has(ctx.getString(R.string.fb_graph_field_events))){
+            if (js2.getJSONObject(key).has(ctx.getString(R.string.fb_graph_field_events))) {
                 js1.put(key, js2.get(key));
             }
         }
@@ -220,7 +225,7 @@ public class FacebookGraphManager {
                     Gson gson = new Gson();
 //                    jsonMix.put(key, jsonResp.get(key));
                     JSONObject aux = jsonResp.getJSONObject(key);
-                    if(aux.has(ctx.getString(R.string.fb_graph_field_events))){
+                    if (aux.has(ctx.getString(R.string.fb_graph_field_events))) {
                         FacebookPlace eventPlace = gson.fromJson(aux.toString(), FacebookPlace.class);
                         JSONArray eventsArr = aux.getJSONObject(ctx.getString(R.string.fb_graph_field_events)).getJSONArray("data");
                         for (int i = 0; i < eventsArr.length(); i++) {
@@ -237,7 +242,7 @@ public class FacebookGraphManager {
     }
 
     public List<FacebookEvent> findEventsOfPlace(String placeId, GraphSearchData sd) throws JSONException {
-        if(placeId==null || placeId.isEmpty()) {
+        if (placeId == null || placeId.isEmpty()) {
             throw new IllegalArgumentException("PlaceId cannot be null or empty");
         }
         List<String> id = new ArrayList<>();
@@ -245,7 +250,7 @@ public class FacebookGraphManager {
         return findEvents(id, sd);
     }
 
-    public static boolean isLogged(){
+    public static boolean isLogged() {
         return AccessToken.getCurrentAccessToken() != null;
     }
 }
