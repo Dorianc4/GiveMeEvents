@@ -102,4 +102,6 @@
     <string name="shop_cat">Shopping &amp; Retail</string>
     <string name="travel_cat">Travel &amp; Transportation</string>
     <string name="search_menu">Find</string>
+    <string name="title_activity_event_details">EventDetails</string>
+
 </resources>

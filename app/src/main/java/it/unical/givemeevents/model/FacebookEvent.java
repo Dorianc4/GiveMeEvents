@@ -2,11 +2,13 @@ package it.unical.givemeevents.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class FacebookEvent {
+public class FacebookEvent implements Serializable{
 
     private String id;
     private String type;

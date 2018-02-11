@@ -23,11 +23,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +52,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.unical.givemeevents.adapter.EventAdapter;
+import it.unical.givemeevents.adapter.RecycleViewAdapter;
 import it.unical.givemeevents.gui.FilterSearchDialog;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.model.GraphSearchData;
@@ -70,9 +74,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AsyncTask<Void, List<FacebookEvent>, List<FacebookEvent>> asyncFindEvents;
     private boolean isLargeLayout;
     private GraphSearchData gsd;
+    private RecyclerView myRecycle;
+    private RecycleViewAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         isLargeLayout = getResources().getBoolean(R.bool.large_layout);
@@ -123,10 +132,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         ///////////////////////////////////////////////////////////
+
+        myRecycle = (RecyclerView) findViewById(R.id.cardView);
+        myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
+
+        myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), this);
+        myRecycle.setAdapter(myAdapter);
+
+
+
         gsd = new GraphSearchData(500, getResources().getStringArray(R.array.fb_graph_field_categories));
-        eventsList = (ListView) findViewById(R.id.eventsList);
+        /*eventsList = (ListView) findViewById(R.id.eventsList);
         adapter = new EventAdapter(this, new ArrayList<FacebookEvent>());
-        eventsList.setAdapter(adapter);
+        eventsList.setAdapter(adapter);*/
         manageLoginAction();
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
@@ -188,7 +206,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (asyncFindEvents != null && asyncFindEvents.getStatus() == AsyncTask.Status.RUNNING) {
             asyncFindEvents.cancel(true);
         }
-        adapter.removeAllEvents();
+        //adapter.removeAllEvents();
+        myAdapter.removeAllEvents();
         asyncFindEvents = new AsyncTask<Void, List<FacebookEvent>, List<FacebookEvent>>() {
             @Override
             protected List<FacebookEvent> doInBackground(Void[] objects) {
@@ -196,7 +215,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
                     List<String> ids = graphManager.findPlacesId(gsd);
-//                adapter = new EventAdapter(MainActivity.this, new ArrayList<FacebookEvent>());
+//                //adapter = new EventAdapter(MainActivity.this, new ArrayList<FacebookEvent>());
+//                    myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), MainActivity.this);
                     Log.d("CANTIDAD", ids.size() + "");
                     try {
 //                        for (int i = 0; i < a.size(); i++) {
@@ -240,8 +260,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onProgressUpdate(List<FacebookEvent>[] values) {
                 super.onProgressUpdate(values);
                 List<FacebookEvent> a = values[0];
-                Log.d("CANTIDADFULL", adapter.getEvents().size() + "");
-                adapter.addEvents(a);
+                Log.d("CANTIDADFULL", myAdapter.getEvents().size() + "");
+                //adapter.addEvents(a);
+                myAdapter.addEvents(a);
 //                String text = a.size()+"\n";
 
 //                for (FacebookEvent e: a) {

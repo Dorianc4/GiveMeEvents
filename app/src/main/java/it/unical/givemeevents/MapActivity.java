@@ -1,9 +1,8 @@
-package it.unical.givemeevents.gui;
+package it.unical.givemeevents;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,8 +15,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import it.unical.givemeevents.R;
 
 /**
  * Created by Yelena on 10/2/2018.
@@ -60,7 +57,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        getLocationPermission();
+        //getLocationPermission();
+        initMap();
     }
 
     private void initMap(){
@@ -101,7 +99,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
+   /* @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGRanted = false;
 
@@ -120,5 +118,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         }
-    }
+    }*/
 }
