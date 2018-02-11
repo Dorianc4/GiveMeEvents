@@ -14,6 +14,7 @@
     <string name="fb_graph_field_eventfields">id,type,name,cover.fields(id,source),picture.type(large),description,start_time,end_time,category,attending_count,declined_count,interested_count,maybe_count,noreply_count,ticket_uri,ticketing_privacy_uri,ticketing_terms_uri,place.fields(id,name,location{city,country,latitude,longitude,state,street,zip})</string>
     <string name="fb_graph_field_placefields">id,name,about,emails,cover.fields(id,source),picture.type(large),category,category_list.fields(name),location{city,country,latitude,longitude,state,street,zip},events.fields({field_evt}) </string>
     <string name="fb_logout_msg">Are you sure you want to logout?</string>
+    <string name="db_name">givemeevents.db</string>
     <string-array name="fb_graph_field_categories">
         <item>ARTS_ENTERTAINMENT</item>
         <item>EDUCATION</item>
