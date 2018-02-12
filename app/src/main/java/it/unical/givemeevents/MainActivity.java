@@ -2,11 +2,13 @@ package it.unical.givemeevents;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
@@ -53,7 +55,9 @@ import java.util.List;
 
 import it.unical.givemeevents.adapter.EventAdapter;
 import it.unical.givemeevents.adapter.RecycleViewAdapter;
+import it.unical.givemeevents.database.GiveMeEventDbManager;
 import it.unical.givemeevents.gui.FilterSearchDialog;
+import it.unical.givemeevents.model.EventPlace;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.model.GraphSearchData;
 import it.unical.givemeevents.network.FacebookGraphManager;
@@ -67,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private ListView eventsList;
-    private EventAdapter adapter;
+    //    private EventAdapter adapter;
     private NavigationView navigationView;
     private CustomLocationManager locManager;
     private LocationListener locListener;
@@ -76,10 +80,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GraphSearchData gsd;
     private RecyclerView myRecycle;
     private RecycleViewAdapter myAdapter;
+    private GiveMeEventDbManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
 
         super.onCreate(savedInstanceState);
@@ -131,15 +135,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         };
-        ///////////////////////////////////////////////////////////
-
+        ////////////////////////RECYCLE VIEW///////////////////////////////////
         myRecycle = (RecyclerView) findViewById(R.id.cardView);
         myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
-
         myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), this);
         myRecycle.setAdapter(myAdapter);
-
-
 
         gsd = new GraphSearchData(500, getResources().getStringArray(R.array.fb_graph_field_categories));
         /*eventsList = (ListView) findViewById(R.id.eventsList);
@@ -149,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
         }
+
+//        dbManager = new GiveMeEventDbManager(this);
+//        dbManager.addorReplaceTraceCategory("23123123");
+//        dbManager.getAllTraceCategories();
 
     }
 
@@ -312,26 +316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.action_location) {
             requestLocation();
         } else if (id == R.id.action_search) {
-            FilterSearchDialog fDialog = FilterSearchDialog.newInstance();
-            Bundle b = new Bundle();
-            b.putSerializable("search", gsd);
-            fDialog.setArguments(b);
-            fDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            if (isLargeLayout) {
-                fDialog.show(fragmentManager, "dialog");
-            } else {
-//            FilterSearchDialog.newInstance().show(getSupportFragmentManager(), getString(R.string.search_msg));
-                // The device is smaller, so show the fragment fullscreen
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                // For a little polish, specify a transition animation
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                // To make it fullscreen, use the 'content' root view as the container
-                // for the fragment, which is always the root view for the activity
-                transaction.add(R.id.drawer_layout, fDialog)
-                        .addToBackStack(null).commit();
-            }
-
+            openFilterSearch();
         }
 
         return super.onOptionsItemSelected(item);
@@ -348,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.action_search) {
-
+            openFilterSearch();
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -390,6 +375,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void openFilterSearch() {
+
+        FilterSearchDialog fDialog = FilterSearchDialog.newInstance();
+        Bundle b = new Bundle();
+        b.putSerializable("search", gsd);
+        fDialog.setArguments(b);
+        fDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (isLargeLayout) {
+            fDialog.show(fragmentManager, "dialog");
+        } else {
+//            FilterSearchDialog.newInstance().show(getSupportFragmentManager(), getString(R.string.search_msg));
+            // The device is smaller, so show the fragment fullscreen
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            // For a little polish, specify a transition animation
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            // To make it fullscreen, use the 'content' root view as the container
+            // for the fragment, which is always the root view for the activity
+            transaction.add(R.id.drawer_layout, fDialog)
+                    .addToBackStack(null).commit();
+        }
+    }
+
     private void requestLocation() {
         if (locManager.isLocationEnabled()) {
             locManager.getLocation(locListener);
@@ -413,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             loginButton.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
-            adapter.removeAllEvents();
+            myAdapter.removeAllEvents();
         }
 
     }
