@@ -2,19 +2,21 @@ package it.unical.givemeevents.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class FacebookPlace {
+public class FacebookPlace implements Serializable{
 
     private String id,name,category;
-    private Picture picture;
+    private transient Picture picture;
     private String[] emails;
     @SerializedName("category_list")
     private Category[] categoryList;
     private Location location;
-    private CoverPhoto cover;
+    private transient CoverPhoto cover;
 
     public String getId() {
         return id;

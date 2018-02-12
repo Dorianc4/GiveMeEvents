@@ -1,10 +1,12 @@
 package it.unical.givemeevents.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class CoverPhoto {
+public class CoverPhoto implements Serializable{
     private String id, source;
 
     public CoverPhoto(String id, String source) {

@@ -2,11 +2,13 @@ package it.unical.givemeevents.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class ProfilePictureSource {
+public class ProfilePictureSource implements Serializable{
     private int height,width;
     @SerializedName("is_silhouette")
     private boolean isSilhouette;

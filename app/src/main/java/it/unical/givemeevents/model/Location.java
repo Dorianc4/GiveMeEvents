@@ -1,10 +1,12 @@
 package it.unical.givemeevents.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class Location {
+public class Location implements Serializable{
 
     private String city,country,region,state,street,zip;
     private float latitude,longitude;

@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView myRecycle;
     private RecycleViewAdapter myAdapter;
     private GiveMeEventDbManager dbManager;
+    private TextView evQuant;
+    private ImageButton ev_ShowMap;
+    private ImageButton pl_Favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +160,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Cursor a = dbManager.getAllTraceCategories();
         a.moveToNext();
         Log.d("FROMDATABASE", a.getString(0));
+
+        /////////////////////////////BOTTOM BAR//////////////////////////////////////
+        evQuant = (TextView) findViewById(R.id.txt_evQuantity);
+        ev_ShowMap = (ImageButton) findViewById(R.id.btn_allMap);
+        pl_Favorites = (ImageButton) findViewById(R.id.btn_mFavorites);
+
+        ev_ShowMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<EventPlace> places = new ArrayList<EventPlace>();
+                for(int i = 0; i< myAdapter.getItemCount();i++){
+                    if(myAdapter.getEvents().get(i).getPlace()!=null);
+                        places.add(myAdapter.getEvents().get(i).getPlace());
+                }
+                Intent mapIntent = new Intent(MainActivity.this, MapActivity.class);
+                mapIntent.putExtra("eventList", places);
+                startActivity(mapIntent);
+            }
+        });
 
     }
 
@@ -269,6 +293,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("CANTIDADFULL", myAdapter.getEvents().size() + "");
                 //adapter.addEvents(a);
                 myAdapter.addEvents(a);
+
+                if(myAdapter.getItemCount() > 1)
+                    evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
+                else
+                    evQuant.setText(myAdapter.getItemCount() + " " + "Event Founded");
 //                String text = a.size()+"\n";
 
 //                for (FacebookEvent e: a) {

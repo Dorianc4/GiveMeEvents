@@ -1,5 +1,7 @@
 package it.unical.givemeevents.model;
 
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -12,13 +14,13 @@ public class FacebookEvent implements Serializable{
 
     private String id;
     private String type;
-    private Picture picture;
+    private  Picture picture;
     @SerializedName("attending_count")
     private int attendingCount;
     @SerializedName("noreply_count")
     private String noReplyCount;
     private String category;
-    private CoverPhoto cover;
+    private  CoverPhoto cover;
     @SerializedName("declined_count")
     private int declinedCount;
     private String description;
