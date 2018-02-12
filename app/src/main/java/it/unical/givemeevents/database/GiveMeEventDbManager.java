@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import it.unical.givemeevents.model.Category;
 import it.unical.givemeevents.model.EventPlace;
 
 /**
@@ -119,6 +120,58 @@ public class GiveMeEventDbManager {
         }
         row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_PICTURE, place.getPicture());
         db.update(PlaceDbContract.PlaceEntry.TABLE_NAME, row, PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(place.getId())});
+        db.close();
+    }
+
+    public long addorReplaceTrace(String id_place, String time) {
+        SQLiteDatabase db = openhelper.getWritableDatabase();
+        if (db == null || id_place == null || time == null) {
+            return 0;
+        }
+        ContentValues row = new ContentValues();
+        row.put(TraceDbContract.TraceEntry.COLUMN_NAME_ID_PLACE, id_place);
+        row.put(TraceDbContract.TraceEntry.COLUMN_NAME_START_TIME, time);
+        long id = db.insertWithOnConflict(TraceDbContract.TraceEntry.TABLE_NAME, null, row, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+        return id;
+    }
+
+    public Cursor getAllTraces() {
+        SQLiteDatabase db = openhelper.getReadableDatabase();
+        if (db == null) {
+            return null;
+        }
+        return db.rawQuery("select * from " + TraceDbContract.TraceEntry.TABLE_NAME, null);
+    }
+
+    public Cursor getAllTraceCategories() {
+        SQLiteDatabase db = openhelper.getReadableDatabase();
+        if (db == null) {
+            return null;
+        }
+        return db.rawQuery("select * from " + GiveMeEventsDbHelper.CATEGORY_TRACE_TABLE_NAME, null);
+    }
+
+    public long addorReplaceTraceCategory(String id_category) {
+        SQLiteDatabase db = openhelper.getWritableDatabase();
+        if (db == null || id_category == null) {
+            return 0;
+        }
+        ContentValues row = new ContentValues();
+        row.put(GiveMeEventsDbHelper.COLUMN_NAME_ID_CATEGORY, id_category);
+        long id = db.insertWithOnConflict(GiveMeEventsDbHelper.CATEGORY_TRACE_TABLE_NAME, null, row, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+        return id;
+    }
+
+    public void addorReplaceTrace(Category[] categories) {
+        SQLiteDatabase db = openhelper.getWritableDatabase();
+        if (db == null || categories == null) {
+            return;
+        }
+        for (Category cat : categories) {
+            addorReplaceTraceCategory(cat.getId());
+        }
         db.close();
     }
 }

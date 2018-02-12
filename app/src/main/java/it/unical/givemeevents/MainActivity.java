@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private ListView eventsList;
-    private EventAdapter adapter;
+    //    private EventAdapter adapter;
     private NavigationView navigationView;
     private CustomLocationManager locManager;
     private LocationListener locListener;
@@ -149,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
         }
+
+//        dbManager = new GiveMeEventDbManager(this);
+//        dbManager.addorReplaceTraceCategory("23123123");
+//        dbManager.getAllTraceCategories();
 
     }
 
@@ -417,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             loginButton.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
-            adapter.removeAllEvents();
+            myAdapter.removeAllEvents();
         }
 
     }
