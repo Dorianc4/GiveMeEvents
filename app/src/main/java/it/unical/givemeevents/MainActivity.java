@@ -150,9 +150,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             validateAndPerformFind();
         }
 
-//        dbManager = new GiveMeEventDbManager(this);
-//        dbManager.addorReplaceTraceCategory("23123123");
-//        dbManager.getAllTraceCategories();
+        dbManager = new GiveMeEventDbManager(this);
+        dbManager.addorReplaceTraceCategory("21313123");
+        Cursor a = dbManager.getAllTraceCategories();
+        a.moveToNext();
+        Log.d("FROMDATABASE", a.getString(0));
 
     }
 

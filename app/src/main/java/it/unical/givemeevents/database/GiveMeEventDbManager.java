@@ -164,7 +164,7 @@ public class GiveMeEventDbManager {
         return id;
     }
 
-    public void addorReplaceTrace(Category[] categories) {
+    public void addorReplaceCategoryTrace(Category[] categories) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null || categories == null) {
             return;
