@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +98,8 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
             //Intent detailIntent = new Intent(ctx, )
         });
+        Log.d("EVENTID", event.getId());
+        Log.d("PLACEID", event.getPlaceOwner().getId());
     }
 
     @Override

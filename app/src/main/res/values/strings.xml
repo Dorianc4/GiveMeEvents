@@ -80,6 +80,7 @@
     <string-array name="distances_array_filter">
         <item>500 M</item>
         <item>1 KM</item>
+        <item>3 KM</item>
         <item>5 KM</item>
         <item>10 KM</item>
     </string-array>

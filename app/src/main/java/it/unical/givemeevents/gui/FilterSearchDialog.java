@@ -80,6 +80,9 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                 case 1000:
                     spinner.setSelection(1, true);
                     break;
+                case 3000:
+                    spinner.setSelection(1, true);
+                    break;
                 case 5000:
                     spinner.setSelection(2, true);
                     break;
@@ -199,9 +202,12 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                         distance = 1000;
                         break;
                     case 2:
-                        distance = 5000;
+                        distance = 3000;
                         break;
                     case 3:
+                        distance = 5000;
+                        break;
+                    case 4:
                         distance = 10000;
                         break;
                     default:
