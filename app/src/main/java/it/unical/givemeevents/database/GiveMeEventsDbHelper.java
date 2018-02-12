@@ -17,7 +17,7 @@ public class GiveMeEventsDbHelper extends SQLiteOpenHelper {
     private static final String DOUBLE_TYPE = " DOUBLE";
     private static final String COMMA_SEP = ",";
 
-    private static final String SQL_CREATE_TABLES = "CREATE TABLE IF NOT EXIST" +
+    private static final String SQL_CREATE_TABLES = "CREATE TABLE IF NOT EXISTS " +
             PlaceDbContract.PlaceEntry.TABLE_NAME + " (" +
             PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
             PlaceDbContract.PlaceEntry.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +

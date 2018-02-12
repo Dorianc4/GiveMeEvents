@@ -9,6 +9,8 @@ public class EventPlace {
     private String id;
     private String name;
     private Location location;
+    //ONLY FOR FAVORITES PLACES
+    private String picture;
 
     public EventPlace() {
     }
@@ -42,4 +44,13 @@ public class EventPlace {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
 }
