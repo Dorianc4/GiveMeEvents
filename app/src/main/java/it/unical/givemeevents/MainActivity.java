@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         ////////////////////////////////////////////////////////
 
         ////////////////////FACEBOOK LOGIN///////////////////////
@@ -145,11 +146,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
         myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), this);
         myRecycle.setAdapter(myAdapter);
+        myAdapter.setOnItemClickListener(new RecycleViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                FacebookEvent event = myAdapter.getEvents().get(position);
+                Intent detIntent = new Intent(MainActivity.this, EventDetails.class);
+                detIntent.putExtra("Event", event);
+                startActivity(detIntent);
+            }
+        });
 
         gsd = new GraphSearchData(500, getResources().getStringArray(R.array.fb_graph_field_categories));
-        /*eventsList = (ListView) findViewById(R.id.eventsList);
-        adapter = new EventAdapter(this, new ArrayList<FacebookEvent>());
-        eventsList.setAdapter(adapter);*/
+
         manageLoginAction();
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
@@ -175,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         places.add(myAdapter.getEvents().get(i).getPlace());
                 }
                 Intent mapIntent = new Intent(MainActivity.this, MapActivity.class);
-                mapIntent.putExtra("eventList", places);
+                mapIntent.putParcelableArrayListExtra("eventList", places);
                 startActivity(mapIntent);
             }
         });
@@ -295,9 +303,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myAdapter.addEvents(a);
 
                 if(myAdapter.getItemCount() > 1)
-                    evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
+                    evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
                 else
-                    evQuant.setText(myAdapter.getItemCount() + " " + "Event Founded");
+                    evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
 //                String text = a.size()+"\n";
 
 //                for (FacebookEvent e: a) {

@@ -68,10 +68,11 @@
         android:id="@+id/imageView5"
         android:layout_width="35dp"
         android:layout_height="39dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView6"
-        app:srcCompat="@drawable/ic_calendar"
-        tools:layout_editor_absoluteX="16dp" />
+        app:srcCompat="@drawable/ic_calendar" />
 
     <ImageView
         android:id="@+id/imageView6"

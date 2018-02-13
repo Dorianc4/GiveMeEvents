@@ -1,16 +1,19 @@
 package it.unical.givemeevents.model;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+import it.unical.givemeevents.EventDetails;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class FacebookEvent implements Serializable{
+public class FacebookEvent implements Parcelable{
 
     private String id;
     private String type;
@@ -63,6 +66,74 @@ public class FacebookEvent implements Serializable{
         this.tickedUri = tickedUri;
         this.ticketingPrivacyUri = ticketingPrivacyUri;
         this.ticketingTermsUri = ticketingTermsUri;
+    }
+
+    public FacebookEvent(Parcel in) {
+        this.id = in.readString();
+        this.type = in.readString();
+        this.picture = in.readParcelable(Picture.class.getClassLoader());
+        this.attendingCount = in.readInt();
+        this.noReplyCount = in.readString();
+        this.category = in.readString();
+        this.cover = in.readParcelable(CoverPhoto.class.getClassLoader());
+        this.declinedCount = in.readInt();
+        this.description = in.readString();
+        this.endTime = in.readString();
+        this.interestedCount = in.readInt();
+        this.maybeCount = in.readInt();
+        this.name = in.readString();
+        this.place = in.readParcelable(EventPlace.class.getClassLoader());
+        this.startTime = in.readString();
+        this.tickedUri = in.readString();
+        this.ticketingPrivacyUri = in.readString();
+        this.ticketingTermsUri = in.readString();
+        this.placeOwner = in.readParcelable(FacebookPlace.class.getClassLoader());
+    }
+    public static  final  Creator<FacebookEvent> CREATOR = new ClassLoaderCreator<FacebookEvent>() {
+
+        @Override
+        public FacebookEvent createFromParcel(Parcel source, ClassLoader loader) {
+            return new FacebookEvent(source);
+        }
+
+        @Override
+        public FacebookEvent createFromParcel(Parcel source) {
+            return new FacebookEvent(source);
+        }
+
+        @Override
+        public FacebookEvent[] newArray(int size) {
+            return new FacebookEvent[size];
+        }
+
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(type);
+        dest.writeParcelable(picture, flags);
+        dest.writeInt(attendingCount);
+        dest.writeString(noReplyCount);
+        dest.writeString(category);
+        dest.writeParcelable(cover, flags);
+        dest.writeInt(declinedCount);
+        dest.writeString(description);
+        dest.writeString(endTime);
+        dest.writeInt(interestedCount);
+        dest.writeInt(maybeCount);
+        dest.writeString(name);
+        dest.writeParcelable(place,flags);
+        dest.writeString(startTime);
+        dest.writeString(tickedUri);
+        dest.writeString(ticketingPrivacyUri);
+        dest.writeString(ticketingTermsUri);
+        dest.writeParcelable(placeOwner,flags);
     }
 
     public String getId() {

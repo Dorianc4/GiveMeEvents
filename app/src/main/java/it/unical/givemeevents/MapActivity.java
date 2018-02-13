@@ -111,7 +111,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .enableAutoManage(this, this)
                 .build();
         mGeoDataClient = Places.getGeoDataClient(this, null);
-        //ShowonMap();
+        ShowonMap();
     }
 
     private void geoLocate(){
