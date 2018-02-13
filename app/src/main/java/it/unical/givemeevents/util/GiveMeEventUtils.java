@@ -172,6 +172,8 @@ public class GiveMeEventUtils {
                 if (event.getEndTime() != null && !event.getEndTime().isEmpty()) {
                     Date dEnd = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
                     values.put(CalendarContract.Events.DTEND, dEnd.getTime());
+                } else {
+                    values.put(CalendarContract.Events.DURATION, "PT2H");
                 }
                 Calendar cal = new GregorianCalendar();
                 values.put(CalendarContract.Events.TITLE, event.getName());
