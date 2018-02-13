@@ -81,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textView;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
-    private ListView eventsList;
-    //    private EventAdapter adapter;
+    private List<EventPlace> favoritesPlaces = new ArrayList<>();
     private NavigationView navigationView;
     private CustomLocationManager locManager;
     private LocationListener locListener;
@@ -101,8 +100,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textViewNameAccount;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onResume() {
+        super.onResume();
+        favoritesPlaces = dbManager.getAllFavPlaces();
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -186,12 +190,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
         }
-//
-//        dbManager = new GiveMeEventDbManager(this);
-//        dbManager.addorReplaceTraceCategory("21313123");
-//        Cursor a = dbManager.getAllTraceCategories();
+
+        dbManager = new GiveMeEventDbManager(this);
+        dbManager.addorReplaceFavPlace(new EventPlace("213213", "Unical", null, ""));
+        boolean a = dbManager.existFavPlace(213213);
 //        a.moveToNext();
-//        Log.d("FROMDATABASE", a.getString(0));
+        Log.d("FROMDATABASE", a + "");
 
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
         evQuant = (TextView) findViewById(R.id.txt_evQuantity);
@@ -332,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (myAdapter.getItemCount() > 1)
                     evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
-                if(myAdapter.getItemCount() > 1)
+                if (myAdapter.getItemCount() > 1)
                     evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
                 else
                     evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
@@ -491,28 +495,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (FacebookGraphManager.isLogged()) {
             loginButton.setVisibility(View.GONE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
+            navigationView.getMenu().findItem(R.id.action_search).setEnabled(true);
             findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
             graphManager.findUserBasicInfo(new GraphRequest.GraphJSONObjectCallback() {
                 @Override
                 public void onCompleted(JSONObject object, GraphResponse response) {
-                    String name = object.optString("name");
-                    textViewNameAccount.setText(name);
-                    JSONObject picture = object.optJSONObject("picture");
-                    if (picture != null) {
-                        JSONObject data = picture.optJSONObject("data");
-                        if (data != null) {
-                            Picasso.with(MainActivity.this).load(data.optString("url"))
-                                    .transform(new PicassoCircleTranformation())
-                                    .placeholder(R.drawable.ic_def_account_image)
-                                    .into(imageViewAccount);
+                    if (object != null) {
+                        String name = object.optString("name");
+                        textViewNameAccount.setText(name);
+                        JSONObject picture = object.optJSONObject("picture");
+                        if (picture != null) {
+                            JSONObject data = picture.optJSONObject("data");
+                            if (data != null) {
+                                Picasso.with(MainActivity.this).load(data.optString("url"))
+                                        .transform(new PicassoCircleTranformation())
+                                        .placeholder(R.drawable.ic_def_account_image)
+                                        .into(imageViewAccount);
+                            }
                         }
                     }
-
                 }
             });
         } else {
             loginButton.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.action_search).setEnabled(false);
             myAdapter.removeAllEvents();
             Picasso.with(MainActivity.this).load(R.drawable.ic_def_account_image)
                     .into(imageViewAccount);

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by Manuel on 9/12/2017.
  */
 
-public class EventPlace implements Parcelable{
+public class EventPlace implements Parcelable {
 
     private String id;
     private String name;
@@ -20,10 +20,11 @@ public class EventPlace implements Parcelable{
     public EventPlace() {
     }
 
-    public EventPlace(String id, String name, Location location) {
+    public EventPlace(String id, String name, Location location, String picture) {
         this.id = id;
         this.name = name;
         this.location = location;
+        this.picture = picture;
     }
 
 
@@ -34,7 +35,7 @@ public class EventPlace implements Parcelable{
         this.picture = in.readString();
     }
 
-    public static  final  Creator<EventPlace> CREATOR = new ClassLoaderCreator<EventPlace>() {
+    public static final Creator<EventPlace> CREATOR = new ClassLoaderCreator<EventPlace>() {
 
         @Override
         public EventPlace createFromParcel(Parcel source, ClassLoader loader) {

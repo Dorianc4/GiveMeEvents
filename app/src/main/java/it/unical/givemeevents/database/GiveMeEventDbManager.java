@@ -6,8 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.unical.givemeevents.model.Category;
 import it.unical.givemeevents.model.EventPlace;
+import it.unical.givemeevents.model.Location;
 
 /**
  * Created by Manuel on 11/2/2018.
@@ -21,12 +25,28 @@ public class GiveMeEventDbManager {
         openhelper = new GiveMeEventsDbHelper(context);
     }
 
-    public Cursor getAllFavPlaces() {
+    public List<EventPlace> getAllFavPlaces() {
         SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null) {
             return null;
         }
-        return db.rawQuery("select * from " + PlaceDbContract.PlaceEntry.TABLE_NAME, null);
+        Cursor c = db.rawQuery("select * from " + PlaceDbContract.PlaceEntry.TABLE_NAME, null);
+        List<EventPlace> eventList = new ArrayList<>();
+        if (c != null) {
+            while (c.moveToNext()) {
+                Location loc = new Location();
+                loc.setLatitude(c.getFloat(4));
+                loc.setLongitude(c.getFloat(5));
+                loc.setCity(c.getString(2));
+                loc.setCountry(c.getString(3));
+                loc.setStreet(c.getString(6));
+                EventPlace evt = new EventPlace(c.getLong(0) + "", c.getString(1), loc, c.getString(7));
+                eventList.add(evt);
+            }
+        }
+        c.close();
+        db.close();
+        return eventList;
     }
 
     public ContentValues getFavPlace(long id) {
@@ -121,6 +141,24 @@ public class GiveMeEventDbManager {
         row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_PICTURE, place.getPicture());
         db.update(PlaceDbContract.PlaceEntry.TABLE_NAME, row, PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(place.getId())});
         db.close();
+    }
+
+    public boolean existFavPlace(long id) {
+        SQLiteDatabase db = openhelper.getWritableDatabase();
+        if (db == null || id == 0) {
+            return false;
+        }
+        boolean flag = false;
+        Cursor cursor = db.rawQuery("select count(*) from " + PlaceDbContract.PlaceEntry.TABLE_NAME + " where " + PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(id)});
+        if (cursor.moveToNext()) {
+            int count = cursor.getInt(0);
+            if (count > 0) {
+                flag = true;
+            }
+        }
+        cursor.close();
+        db.close();
+        return flag;
     }
 
     public long addorReplaceTrace(String id_place, String time) {

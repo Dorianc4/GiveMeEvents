@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.widget.Toast;
 
 import java.text.ParseException;
@@ -131,6 +133,16 @@ public class GiveMeEventUtils {
             return sd.format(date);
         }
         return "";
+    }
+
+    public static void launchBrowser(Context ctx, String url) {
+        if (ctx != null && !url.isEmpty()) {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent();
+            intent.setData(uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ctx.startActivity(intent);
+        }
     }
 
 

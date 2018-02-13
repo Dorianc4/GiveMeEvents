@@ -21,7 +21,7 @@ public class GiveMeEventsDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_FAVPLACE = "CREATE TABLE IF NOT EXISTS " +
             PlaceDbContract.PlaceEntry.TABLE_NAME + " (" +
-            PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+            PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " LARGEINT PRIMARY KEY," +
             PlaceDbContract.PlaceEntry.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
             PlaceDbContract.PlaceEntry.COLUMN_NAME_CITY + TEXT_TYPE + COMMA_SEP +
             PlaceDbContract.PlaceEntry.COLUMN_NAME_COUNTRY + TEXT_TYPE + COMMA_SEP +
