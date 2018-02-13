@@ -27,13 +27,21 @@ import it.unical.givemeevents.util.GiveMeEventUtils;
  */
 
 public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder> {
+    private OnItemClickListener mListener;
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView evName, evPlace, evMonth, evDay, evTime;
         private ImageView evImage;
         private ImageButton evFavorite;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView, final OnItemClickListener listener) {
             super(itemView);
             evName = (TextView) itemView.findViewById(R.id.txt_EvName);
             evPlace = (TextView) itemView.findViewById(R.id.txt_EvPlace);
@@ -42,6 +50,19 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
             evTime = (TextView) itemView.findViewById(R.id.txt_EvTime);
             evImage = (ImageView) itemView.findViewById(R.id.img_Event);
             evFavorite = (ImageButton) itemView.findViewById(R.id.btn_Favorite);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener!=null){
+                       int position = getAdapterPosition();
+                       if(position!= RecyclerView.NO_POSITION){
+                           listener.onItemClick(position);
+                       }
+                    }
+                }
+            });
+
         }
     }
 
@@ -60,7 +81,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_items, parent, false);
-        ViewHolder myViewHolder = new ViewHolder(view);
+        ViewHolder myViewHolder = new ViewHolder(view, mListener);
         return myViewHolder;
     }
 
@@ -94,6 +115,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         holder.evFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 boolean favorite = false;
                 if (!favorite) {
                     holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
@@ -105,6 +127,8 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
             //Intent detailIntent = new Intent(ctx, )
         });
+
+
         Log.d("EVENTID", event.getId());
         Log.d("PLACEID", event.getPlaceOwner().getId());
     }

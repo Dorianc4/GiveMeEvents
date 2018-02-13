@@ -1,12 +1,15 @@
 package it.unical.givemeevents.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class Location implements Serializable{
+public class Location implements Parcelable{
 
     private String city,country,region,state,street,zip;
     private float latitude,longitude;
@@ -23,6 +26,51 @@ public class Location implements Serializable{
         this.zip = zip;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+    public static  final  Creator<Location> CREATOR = new ClassLoaderCreator<Location>() {
+
+        @Override
+        public Location createFromParcel(Parcel source, ClassLoader loader) {
+            return new Location(source);
+        }
+
+        @Override
+        public Location createFromParcel(Parcel source) {
+            return new Location(source);
+        }
+
+        @Override
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+
+    };
+    public Location(Parcel in) {
+        this.city = in.readString();
+        this.country = in.readString();
+        this.region = in.readString();
+        this.state = in.readString();
+        this.street = in.readString();
+        this.zip = in.readString();
+        this.latitude = in.readFloat();
+        this.longitude = in.readFloat();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(city);
+        dest.writeString(country);
+        dest.writeString(region);
+        dest.writeString(state);
+        dest.writeString(street);
+        dest.writeString(zip);
+        dest.writeFloat(latitude);
+        dest.writeFloat(longitude);
     }
 
     public String getCity() {

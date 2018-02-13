@@ -1,5 +1,8 @@
 package it.unical.givemeevents.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -8,15 +11,15 @@ import java.io.Serializable;
  * Created by Manuel on 9/12/2017.
  */
 
-public class FacebookPlace implements Serializable{
+public class FacebookPlace implements Parcelable{
 
     private String id,name,category;
-    private transient Picture picture;
+    private  Picture picture;
     private String[] emails;
     @SerializedName("category_list")
     private Category[] categoryList;
     private Location location;
-    private transient CoverPhoto cover;
+    private CoverPhoto cover;
 
     public String getId() {
         return id;
@@ -80,5 +83,52 @@ public class FacebookPlace implements Serializable{
 
     public void setCover(CoverPhoto cover) {
         this.cover = cover;
+    }
+
+    public FacebookPlace(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.category = in.readString();
+        this.picture = in.readParcelable(Picture.class.getClassLoader());
+        this.emails = in.createStringArray();
+        this.categoryList = in.createTypedArray(Category.CREATOR);
+        this.location = in.readParcelable(Location.class.getClassLoader());
+        this.cover = in.readParcelable(CoverPhoto.class.getClassLoader());
+    }
+
+    public static  final  Creator<FacebookPlace> CREATOR = new ClassLoaderCreator<FacebookPlace>() {
+
+        @Override
+        public FacebookPlace createFromParcel(Parcel source, ClassLoader loader) {
+            return new FacebookPlace(source);
+        }
+
+        @Override
+        public FacebookPlace createFromParcel(Parcel source) {
+            return new FacebookPlace(source);
+        }
+
+        @Override
+        public FacebookPlace[] newArray(int size) {
+            return new FacebookPlace[size];
+        }
+
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(category);
+        dest.writeParcelable(picture,flags);
+        dest.writeArray(emails);
+        dest.writeTypedArray(categoryList, flags);
+        dest.writeParcelable(location, flags);
+        dest.writeParcelable(cover, flags);
     }
 }
