@@ -3,6 +3,11 @@ package it.unical.givemeevents;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
+import android.provider.CalendarContract;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +21,16 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import it.unical.givemeevents.model.FacebookEvent;
+import it.unical.givemeevents.util.GiveMeEventUtils;
 import it.unical.givemeevents.model.Location;
 import it.unical.givemeevents.util.GiveMeEventUtils;
 
 public class EventDetails extends AppCompatActivity {
+
     private FacebookEvent event;
     private TextView txt_Name;
     private TextView txt_Place;
@@ -53,6 +63,7 @@ public class EventDetails extends AppCompatActivity {
         btn_Map = (ImageButton) findViewById(R.id.btn_plMap);
 
         event = getIntent().getParcelableExtra("Event");
+        int i = 0;
 
         String Name = event.getName();
         String Description = event.getDescription();

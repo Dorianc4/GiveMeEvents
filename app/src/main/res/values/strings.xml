@@ -107,5 +107,8 @@
     <string name="travel_cat">Travel &amp; Transportation</string>
     <string name="search_menu">Find</string>
     <string name="title_activity_event_details">EventDetails</string>
+    <string name="add_calendar_msg">Do you want to add this event to the calendar?</string>
+    <string name="added_calendar_msg">The event was added to the calendar</string>
+    <string name="non_added_calendar_msg">The event was not added to the calendar</string>
 
 </resources>

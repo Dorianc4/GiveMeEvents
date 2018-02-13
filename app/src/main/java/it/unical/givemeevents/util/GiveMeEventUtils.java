@@ -1,12 +1,22 @@
 package it.unical.givemeevents.util;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Message;
+import android.provider.CalendarContract;
+import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import java.text.ParseException;
@@ -15,7 +25,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import it.unical.givemeevents.EventDetails;
 import it.unical.givemeevents.R;
+import it.unical.givemeevents.model.FacebookEvent;
 
 /**
  * Created by Manuel on 6/2/2018.
@@ -24,6 +36,7 @@ import it.unical.givemeevents.R;
 public class GiveMeEventUtils {
 
     public final static int ACCESS_FINE_LOCATION_CODE = 25;
+    public final static int WRITE_CALENDAR_CODE = 26;
 
     public static AlertDialog showYesNoDialog(Context ctx, String title, String msg, DialogInterface.OnClickListener yes, DialogInterface.OnClickListener no) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -145,5 +158,55 @@ public class GiveMeEventUtils {
         }
     }
 
+    public static void addEventToCalendar(final Activity act, final FacebookEvent event) {
+        GiveMeEventUtils.showYesNoDialog(act, null, act.getString(R.string.add_calendar_msg), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ContentResolver cr = act.getContentResolver();
+                ContentValues values = new ContentValues();
+                int calId = 1;
+                if (event.getStartTime() != null && !event.getStartTime().isEmpty()) {
+                    Date dStart = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
+                    values.put(CalendarContract.Events.DTSTART, dStart.getTime());
+                }
+                if (event.getEndTime() != null && !event.getEndTime().isEmpty()) {
+                    Date dEnd = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
+                    values.put(CalendarContract.Events.DTEND, dEnd.getTime());
+                }
+                Calendar cal = new GregorianCalendar();
+                values.put(CalendarContract.Events.TITLE, event.getName());
+                if (event.getDescription() != null && !event.getDescription().isEmpty()) {
+                    values.put(CalendarContract.Events.DESCRIPTION, event.getDescription());
+                }
+                values.put(CalendarContract.Events.CALENDAR_ID, calId);
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, cal.getTimeZone().getID());
 
+                AsyncQueryHandler async = new AsyncQueryHandler(cr) {
+                    @Override
+                    protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                        GiveMeEventUtils.showToast(act, R.string.added_calendar_msg);
+                        super.onInsertComplete(token, cookie, uri);
+                    }
+
+                    @Override
+                    public void handleMessage(Message msg) {
+                        if (msg.obj instanceof WorkerArgs) {
+                            WorkerArgs args = (WorkerArgs) msg.obj;
+                            if (args.result instanceof Exception) {
+                                GiveMeEventUtils.showToast(act, R.string.non_added_calendar_msg);
+                                return;
+                            }
+                        }
+                        super.handleMessage(msg);
+                    }
+                };
+                async.startInsert(calId, null, CalendarContract.Events.CONTENT_URI, values);
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
 }
