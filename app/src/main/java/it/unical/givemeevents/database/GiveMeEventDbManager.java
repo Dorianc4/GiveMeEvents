@@ -11,6 +11,7 @@ import java.util.List;
 
 import it.unical.givemeevents.model.Category;
 import it.unical.givemeevents.model.EventPlace;
+import it.unical.givemeevents.model.FacebookPlace;
 import it.unical.givemeevents.model.Location;
 
 /**
@@ -88,6 +89,27 @@ public class GiveMeEventDbManager {
             row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_STREET, place.getLocation().getStreet());
         }
         row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_PICTURE, place.getPicture());
+        long id = db.insert(PlaceDbContract.PlaceEntry.TABLE_NAME, null, row);
+        db.close();
+        return id;
+    }
+
+    public long addFavPlaceOwner(FacebookPlace place) {
+        SQLiteDatabase db = openhelper.getWritableDatabase();
+        if (db == null && place == null) {
+            return 0;
+        }
+        ContentValues row = new ContentValues();
+        row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_ID, place.getId());
+        row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_NAME, place.getName());
+        if (place.getLocation() != null) {
+            row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_CITY, place.getLocation().getCity());
+            row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_COUNTRY, place.getLocation().getCountry());
+            row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_LATITUDE, place.getLocation().getLatitude());
+            row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_LONGITUDE, place.getLocation().getLongitude());
+            row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_STREET, place.getLocation().getStreet());
+        }
+        row.put(PlaceDbContract.PlaceEntry.COLUMN_NAME_PICTURE, place.getPicture().getData().getUrl());
         long id = db.insert(PlaceDbContract.PlaceEntry.TABLE_NAME, null, row);
         db.close();
         return id;

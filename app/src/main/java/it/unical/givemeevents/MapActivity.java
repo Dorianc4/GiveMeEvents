@@ -16,7 +16,6 @@ import android.util.Log;
 
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,7 +41,7 @@ import java.util.List;
 import it.unical.givemeevents.model.EventPlace;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.model.FacebookPlace;
-import it.unical.givemeevents.model.Place;
+import it.unical.givemeevents.model.Mapeable;
 
 /**
  * Created by Yelena on 10/2/2018.
@@ -67,7 +66,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private GoogleApiClient mGoogleApiClient;
     private GeoDataClient mGeoDataClient;
-    private ArrayList<Parcelable> places;
+    private ArrayList<Mapeable> places;
     private FacebookEvent event;
     private String Name;
     private it.unical.givemeevents.model.Location location;
@@ -107,6 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
         //mGps = (ImageView) findViewById(R.id.ic_gps);
         getLocationPermission();
+        places = new ArrayList<Mapeable>();
         if(getCallingActivity()!=null){
             if(getCallingActivity().getClassName().equals(EventDetails.class.getName())){
                Name = getIntent().getStringExtra("Name");
@@ -247,20 +247,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         float longitude = 0;
         String evName = "";
         for(int i = 0; i < places.size(); i++){
-            if(places.get(i) instanceof EventPlace){
-                EventPlace pl1 = (EventPlace) places.get(i);
-                latitude = pl1.getLocation().getLatitude();
-                longitude = pl1.getLocation().getLongitude();
-                LatLng coordinates = new LatLng(latitude, longitude);
-                 evName = pl1.getName();
 
-            }else if(places.get(i) instanceof FacebookPlace){
-                FacebookPlace pl2 = (FacebookPlace) places.get(i);
-                latitude = pl2.getLocation().getLatitude();
-                longitude = pl2.getLocation().getLongitude();
-
-                 evName = pl2.getName();
-            }
+            latitude = places.get(i).getLocation().getLatitude();
+            longitude = places.get(i).getLocation().getLongitude();
+            evName = places.get(i).getName();
             LatLng coordinates = new LatLng(latitude, longitude);
             moveCamera(coordinates, DEFAULT_ZOOM, evName);
         }

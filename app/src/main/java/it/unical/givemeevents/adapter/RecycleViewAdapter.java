@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.unical.givemeevents.R;
+import it.unical.givemeevents.database.GiveMeEventDbManager;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.util.GiveMeEventUtils;
 
@@ -26,6 +27,7 @@ import it.unical.givemeevents.util.GiveMeEventUtils;
 
 public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder> {
     private OnItemClickListener mListener;
+    GiveMeEventDbManager dbM;
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
@@ -85,7 +87,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        FacebookEvent event = findedEvents.get(position);
+        final FacebookEvent event = findedEvents.get(position);
         holder.evName.setText(event.getName());
         Date evdate = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
         SimpleDateFormat myFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
@@ -109,16 +111,47 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         if (event.getPicture() != null) {
             Picasso.with(ctx).load(event.getPicture().getData().getUrl()).placeholder(R.drawable.imagen).into(holder.evImage);
         }
+         dbM = new GiveMeEventDbManager(ctx);
+        if(event.getPlace()!=null){
+            if((dbM.existFavPlace(new Long(event.getPlace().getId())) )){
+                holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
+            }else{
+                holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
+            }
+        }else{
+            if( (dbM.existFavPlace(new Long(event.getPlaceOwner().getId())))){
+                holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
+            }else{
+                holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
+            }
+        }
 
         holder.evFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                boolean favorite = false;
+                boolean favorite;
+                if(event.getPlace()!=null){
+                    favorite = dbM.existFavPlace(new Long(event.getPlace().getId()));
+                }else{
+                    favorite = dbM.existFavPlace(new Long(event.getPlaceOwner().getId()));
+                }
+
                 if (!favorite) {
+                    if(event.getPlace()!=null) {
+                        dbM.addFavPlace(event.getPlace());
+                    }else{
+                        dbM.addFavPlaceOwner(event.getPlaceOwner());
+                    }
                     holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
-                    favorite = true;
+
                 } else {
+                    if(event.getPlace()!=null) {
+                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                    }else{
+                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                    }
+
                     holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
                 }
             }

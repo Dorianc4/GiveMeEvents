@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import it.unical.givemeevents.database.GiveMeEventDbManager;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -41,9 +42,11 @@ public class EventDetails extends AppCompatActivity {
     private TextView txt_Category;
     private ImageView img_Event;
     private ImageButton btn_Map;
+    private ImageButton btn_Calendar;
     private ImageButton btn_Favorite;
     private String Place;
     private Location location;
+    private GiveMeEventDbManager dbM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class EventDetails extends AppCompatActivity {
         img_Event = (ImageView) findViewById(R.id.img_EvImage);
         btn_Favorite = (ImageButton) findViewById(R.id.btn_plFavorite);
         btn_Map = (ImageButton) findViewById(R.id.btn_plMap);
+        btn_Calendar = (ImageButton) findViewById(R.id.btn_AddCalendar);
 
         event = getIntent().getParcelableExtra("Event");
         int i = 0;
@@ -116,7 +120,57 @@ public class EventDetails extends AppCompatActivity {
                 ActivityCompat.startActivityForResult(EventDetails.this, mapIntent, 0, null);
             }
         });
+        dbM = new GiveMeEventDbManager(EventDetails.this);
+        if(event.getPlace()!=null){
+            if((dbM.existFavPlace(new Long(event.getPlace().getId())) )){
+                btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
+            }else{
+                btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
+            }
+        }else{
+            if( (dbM.existFavPlace(new Long(event.getPlaceOwner().getId())))){
+                btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
+            }else{
+                btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
+            }
+        }
+        btn_Favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                boolean favorite;
+                if(event.getPlace()!=null){
+                    favorite = dbM.existFavPlace(new Long(event.getPlace().getId()));
+                }else{
+                    favorite = dbM.existFavPlace(new Long(event.getPlaceOwner().getId()));
+                }
+
+                if (!favorite) {
+                    if(event.getPlace()!=null) {
+                        dbM.addFavPlace(event.getPlace());
+                    }else{
+                        dbM.addFavPlaceOwner(event.getPlaceOwner());
+                    }
+                    btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
+
+                } else {
+                    if(event.getPlace()!=null) {
+                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                    }else{
+                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                    }
+
+                    btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
+                }
+            }
+        });
+
+        btn_Calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GiveMeEventUtils.addEventToCalendar(EventDetails.this, event);
+            }
+        });
     }
 
 }
