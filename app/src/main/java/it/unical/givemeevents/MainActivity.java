@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GiveMeEventDbManager dbManager;
     private TextView evQuant;
     private ImageButton ev_ShowMap;
-    private ImageButton pl_Favorites;
     private ProgressBar progressBarFind;
     private FacebookGraphManager graphManager;
     private ImageView imageViewAccount;
@@ -201,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
         evQuant = (TextView) findViewById(R.id.txt_evQuantity);
         ev_ShowMap = (ImageButton) findViewById(R.id.btn_allMap);
-        pl_Favorites = (ImageButton) findViewById(R.id.btn_mFavorites);
+        //pl_Favorites = (ImageButton) findViewById(R.id.btn_mFavorites);
 
         ev_ShowMap.setOnClickListener(new View.OnClickListener() {
             @Override
