@@ -6,18 +6,39 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,15 +46,21 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import it.unical.givemeevents.MainActivity;
+import it.unical.givemeevents.MapActivity;
 import it.unical.givemeevents.R;
+import it.unical.givemeevents.adapter.PlacesAutoCompleteAdapter;
 import it.unical.givemeevents.model.GraphSearchData;
+import it.unical.givemeevents.model.PlaceInfo;
 import it.unical.givemeevents.util.GiveMeEventUtils;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by Manuel on 9/2/2018.
  */
 
-public class FilterSearchDialog extends DialogFragment implements View.OnClickListener {
+public class FilterSearchDialog extends DialogFragment implements View.OnClickListener,
+        GoogleApiClient.OnConnectionFailedListener{
 
     private int distance;
     private Date sinceD;
@@ -51,6 +78,13 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
     private CheckBox checkBox6;
     private CheckBox checkBox7;
     private CheckBox checkBox8;
+    private AutoCompleteTextView mSearchText;
+    private PlacesAutoCompleteAdapter myAdapter;
+    private GeoDataClient mGeoDataClient;
+    private GoogleApiClient mGoogleApiClient;
+    private PlaceInfo myPlace;
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(-40,-168), new LatLng(71, 136));
 
 
     public static FilterSearchDialog newInstance() {
@@ -148,6 +182,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
         checkBox6 = view.findViewById(R.id.checkBox6);
         checkBox7 = view.findViewById(R.id.checkBox7);
         checkBox8 = view.findViewById(R.id.checkBox8);
+        mSearchText = view.findViewById(R.id.input_search);
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_dialog_search);
         toolbar.setTitle(getActivity().getString(R.string.search_msg));
@@ -271,10 +306,43 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             }
         });
 
+        myAdapter = new PlacesAutoCompleteAdapter(getContext(), mGeoDataClient, LAT_LNG_BOUNDS, null);
+        mSearchText.setAdapter(myAdapter);
+
+        mSearchText.setOnItemClickListener(mAutocompleteClickListener);
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(getContext())
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this , this)
+                .build();
+        mGeoDataClient = Places.getGeoDataClient(getContext(), null);
+
+        myAdapter = new PlacesAutoCompleteAdapter(getContext(), mGeoDataClient, LAT_LNG_BOUNDS, null);
+        mSearchText.setAdapter(myAdapter);
+
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                    //execute Search Method
+                    //geoLocate();
+                }
+                return false;
+            }
+        });
+
         return view;
     }
 
     public void onCheckBoxClicked(View check) {
+
+    }
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
@@ -362,4 +430,52 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
         }
 
     }
+
+
+    /*public void HideSoftKeyboard(View view){
+        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        InputMethodManager myKeyboard = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        myKeyboard.hideSoftInputFromWindow(view.getWindowToken(),0);
+    }*/
+
+    //------------------------------
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //HideSoftKeyboard(mSearchText);
+            final AutocompletePrediction item = myAdapter.getItem(position);
+            final String placeId = item.getPlaceId();
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallBack);
+        }
+    };
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallBack = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+            if(!places.getStatus().isSuccess()){
+               // Log.d(TAG, "onResult: Place Query did not completed sucessfully:" + places.getStatus().toString());
+                places.release();
+                return;
+            }
+            final Place place = places.get(0);
+            try{
+                myPlace = new PlaceInfo();
+                myPlace.setAddress(place.getAddress().toString());
+
+                myPlace.setCoordinates(place.getLatLng());
+                myPlace.setId(place.getId());
+                myPlace.setName(place.getName().toString());
+                myPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                myPlace.setRating(place.getRating());
+                myPlace.setWebSite(place.getWebsiteUri());
+               // Log.d(TAG, "OnResult: place:" + myPlace.toString());
+                Toast.makeText(getContext(), myPlace.toString(), Toast.LENGTH_LONG).show();
+            }catch (NullPointerException e){
+                //Log.e(TAG, "OnResult: NullPointerEception:" + e.getMessage());
+            }
+
+            places.release();
+        }
+    };
 }
