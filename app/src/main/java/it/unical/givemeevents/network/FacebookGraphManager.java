@@ -253,4 +253,29 @@ public class FacebookGraphManager {
     public static boolean isLogged() {
         return AccessToken.getCurrentAccessToken() != null;
     }
+
+    public void findUserBasicInfo(GraphRequest.GraphJSONObjectCallback callback) {
+        if (isLogged()) {
+            AccessToken access = AccessToken.getCurrentAccessToken();
+            if (access != null) {
+                GraphRequest request = GraphRequest.newMeRequest(access, callback);
+                Bundle params = new Bundle();
+                params.putString("fields", ctx.getString(R.string.fb_graph_field_name) + "," + ctx.getString(R.string.fb_graph_field_pictureLarge));
+                request.setParameters(params);
+                request.executeAsync();
+            }
+        }
+    }
+
+    public void getUserAccountPicture(GraphRequest.Callback callback) {
+
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                AccessToken.getCurrentAccessToken(),
+                ctx.getString(R.string.fb_graph_url_picture),
+                callback);
+        Bundle params = new Bundle();
+        params.putBoolean("redirect", false);
+        request.setParameters(params);
+        request.executeAsync();
+    }
 }

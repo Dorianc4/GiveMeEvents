@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -33,21 +35,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -59,6 +67,7 @@ import it.unical.givemeevents.adapter.EventAdapter;
 import it.unical.givemeevents.adapter.RecycleViewAdapter;
 import it.unical.givemeevents.database.GiveMeEventDbManager;
 import it.unical.givemeevents.gui.FilterSearchDialog;
+import it.unical.givemeevents.gui.PicassoCircleTranformation;
 import it.unical.givemeevents.model.EventPlace;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.model.GraphSearchData;
@@ -86,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView evQuant;
     private ImageButton ev_ShowMap;
     private ImageButton pl_Favorites;
+    private ProgressBar progressBarFind;
+    private FacebookGraphManager graphManager;
+    private ImageView imageViewAccount;
+    private TextView textViewNameAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        loginButton.setReadPermissions(Arrays.asList("email"));
         LoginManager.getInstance().registerCallback(callbackManager, new CustomLoginFacebookCallback(this));
 //        LoginManager.getInstance().logInWithReadPermissions(this, null);
+        graphManager = ((GiveMeEventApplication) getApplication()).getFacebookGraphManager();
         ///////////////////////////////////////////////////////////
 
         //////////////////CREATING LOCATION MANAGER////////////////
@@ -146,20 +160,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), this);
         myRecycle.setAdapter(myAdapter);
 
+        progressBarFind = findViewById(R.id.progressBarFind);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            progressBarFind.getIndeterminateDrawable().setColorFilter(getResources().getColor(android.R.color.background_light, null), PorterDuff.Mode.SRC_IN);
+        } else {
+            progressBarFind.getIndeterminateDrawable().setColorFilter(getResources().getColor(android.R.color.background_light), PorterDuff.Mode.SRC_IN);
+        }
+
         gsd = new GraphSearchData(500, getResources().getStringArray(R.array.fb_graph_field_categories));
-        /*eventsList = (ListView) findViewById(R.id.eventsList);
-        adapter = new EventAdapter(this, new ArrayList<FacebookEvent>());
-        eventsList.setAdapter(adapter);*/
+        imageViewAccount = navigationView.getHeaderView(0).findViewById(R.id.imageViewAccountHeader);
+        textViewNameAccount = navigationView.getHeaderView(0).findViewById(R.id.textViewNameAccount);
         manageLoginAction();
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
         }
-
-        dbManager = new GiveMeEventDbManager(this);
-        dbManager.addorReplaceTraceCategory("21313123");
-        Cursor a = dbManager.getAllTraceCategories();
-        a.moveToNext();
-        Log.d("FROMDATABASE", a.getString(0));
+//
+//        dbManager = new GiveMeEventDbManager(this);
+//        dbManager.addorReplaceTraceCategory("21313123");
+//        Cursor a = dbManager.getAllTraceCategories();
+//        a.moveToNext();
+//        Log.d("FROMDATABASE", a.getString(0));
 
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
         evQuant = (TextView) findViewById(R.id.txt_evQuantity);
@@ -170,9 +190,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 ArrayList<EventPlace> places = new ArrayList<EventPlace>();
-                for(int i = 0; i< myAdapter.getItemCount();i++){
-                    if(myAdapter.getEvents().get(i).getPlace()!=null);
-                        places.add(myAdapter.getEvents().get(i).getPlace());
+                for (int i = 0; i < myAdapter.getItemCount(); i++) {
+                    if (myAdapter.getEvents().get(i).getPlace() != null) ;
+                    places.add(myAdapter.getEvents().get(i).getPlace());
                 }
                 Intent mapIntent = new Intent(MainActivity.this, MapActivity.class);
                 mapIntent.putExtra("eventList", places);
@@ -231,7 +251,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void perform() {
-        final FacebookGraphManager graphManager = ((GiveMeEventApplication) getApplication()).getFacebookGraphManager();
         GiveMeEventUtils.setPreference(this, getString(R.string.last_location), gsd.getLatitud() + "," + gsd.getLongitud());
         if (asyncFindEvents != null && asyncFindEvents.getStatus() == AsyncTask.Status.RUNNING) {
             asyncFindEvents.cancel(true);
@@ -239,11 +258,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //adapter.removeAllEvents();
         myAdapter.removeAllEvents();
         asyncFindEvents = new AsyncTask<Void, List<FacebookEvent>, List<FacebookEvent>>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressBarFind.setVisibility(View.VISIBLE);
+            }
+
             @Override
             protected List<FacebookEvent> doInBackground(Void[] objects) {
                 if (!this.isCancelled()) {
-
-
                     List<String> ids = graphManager.findPlacesId(gsd);
 //                //adapter = new EventAdapter(MainActivity.this, new ArrayList<FacebookEvent>());
 //                    myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), MainActivity.this);
@@ -294,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //adapter.addEvents(a);
                 myAdapter.addEvents(a);
 
-                if(myAdapter.getItemCount() > 1)
+                if (myAdapter.getItemCount() > 1)
                     evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
                 else
                     evQuant.setText(myAdapter.getItemCount() + " " + "Event Founded");
@@ -313,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                super.onPostExecute(events);
 //                adapter.setEvents(events);
 //                adapter.notifyDataSetChanged();
+                progressBarFind.setVisibility(View.GONE);
             }
         }.execute();
     }
@@ -359,19 +384,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.action_search) {
+//        } else
+        if (id == R.id.action_search) {
             openFilterSearch();
-        } else if (id == R.id.nav_manage) {
+        }
+// else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
 
-        } else if (id == R.id.nav_send) {
-
-        } else if (id == R.id.nav_logout) {
+//        }
+        else if (id == R.id.nav_logout) {
             if (FacebookGraphManager.isLogged()) {
                 GiveMeEventUtils.showYesNoDialog(this, getString(R.string.app_name), getString(R.string.fb_logout_msg),
                         new DialogInterface.OnClickListener() {
@@ -449,10 +477,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (FacebookGraphManager.isLogged()) {
             loginButton.setVisibility(View.GONE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
+            findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
+            graphManager.findUserBasicInfo(new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject object, GraphResponse response) {
+                    String name = object.optString("name");
+                    textViewNameAccount.setText(name);
+                    JSONObject picture = object.optJSONObject("picture");
+                    if (picture != null) {
+                        JSONObject data = picture.optJSONObject("data");
+                        if (data != null) {
+                            Picasso.with(MainActivity.this).load(data.optString("url"))
+                                    .transform(new PicassoCircleTranformation())
+                                    .placeholder(R.drawable.ic_def_account_image)
+                                    .into(imageViewAccount);
+                        }
+                    }
+
+                }
+            });
         } else {
             loginButton.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
             myAdapter.removeAllEvents();
+            Picasso.with(MainActivity.this).load(R.drawable.ic_def_account_image)
+                    .into(imageViewAccount);
+            textViewNameAccount.setText(getString(R.string.app_name));
+            findViewById(R.id.bottomBar).setVisibility(View.GONE);
         }
 
     }
