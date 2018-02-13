@@ -185,8 +185,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         dbManager = new GiveMeEventDbManager(this);
-        dbManager.addorReplaceFavPlace(new EventPlace("213213", "Unical", null, ""));
-        boolean a = dbManager.existFavPlace(213213);
+//        dbManager.addorReplaceFavPlace(new EventPlace("213213", "Unical", null, ""));
+        List<EventPlace> a = dbManager.getAllFavPlaces();
 //        a.moveToNext();
         Log.d("FROMDATABASE", a + "");
 
@@ -201,13 +201,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ArrayList<Mapeable> places = new ArrayList<Mapeable>();
                 for (int i = 0; i < myAdapter.getItemCount(); i++) {
                     if (myAdapter.getEvents().get(i).getPlace() != null) ;
-                    if(myAdapter.getEvents().get(i).getPlace()!=null){
+                    if (myAdapter.getEvents().get(i).getPlace() != null) {
                         Mapeable place = new Mapeable();
                         place.setName(myAdapter.getEvents().get(i).getPlace().getName());
                         place.setLocation(myAdapter.getEvents().get(i).getPlace().getLocation());
                         places.add(place);
-                    }else if(myAdapter.getEvents().get(i).getPlaceOwner()!=null)
-                    {
+                    } else if (myAdapter.getEvents().get(i).getPlaceOwner() != null) {
                         Mapeable place = new Mapeable();
                         place.setName(myAdapter.getEvents().get(i).getPlaceOwner().getName());
                         place.setLocation(myAdapter.getEvents().get(i).getPlaceOwner().getLocation());
