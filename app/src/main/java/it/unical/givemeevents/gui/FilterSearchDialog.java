@@ -314,7 +314,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                 .Builder(getContext())
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this , this)
+                .enableAutoManage(getActivity() , this)
                 .build();
         mGeoDataClient = Places.getGeoDataClient(getContext(), null);
 
