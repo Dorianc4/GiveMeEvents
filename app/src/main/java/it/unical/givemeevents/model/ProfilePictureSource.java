@@ -15,6 +15,7 @@ public class ProfilePictureSource implements Parcelable{
     private int height,width;
     @SerializedName("is_silhouette")
     private boolean isSilhouette;
+    private String url;
 
     public ProfilePictureSource() {
     }
@@ -62,6 +63,7 @@ public class ProfilePictureSource implements Parcelable{
         dest.writeInt(height);
         dest.writeInt(width);
         dest.writeByte((byte) (isSilhouette ? 1 : 0));
+        dest.writeString(url);
     }
 
     public int getHeight() {
@@ -96,5 +98,4 @@ public class ProfilePictureSource implements Parcelable{
         this.url = url;
     }
 
-    private String url;
 }

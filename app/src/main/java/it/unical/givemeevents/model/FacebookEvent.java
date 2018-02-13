@@ -75,7 +75,7 @@ public class FacebookEvent implements Parcelable{
         this.attendingCount = in.readInt();
         this.noReplyCount = in.readString();
         this.category = in.readString();
-        this.cover = in.readParcelable(CoverPhoto.class.getClassLoader());
+        //this.cover = in.readParcelable(CoverPhoto.class.getClassLoader());
         this.declinedCount = in.readInt();
         this.description = in.readString();
         this.endTime = in.readString();
@@ -121,7 +121,7 @@ public class FacebookEvent implements Parcelable{
         dest.writeInt(attendingCount);
         dest.writeString(noReplyCount);
         dest.writeString(category);
-        dest.writeParcelable(cover, flags);
+        //dest.writeParcelable(cover, flags);
         dest.writeInt(declinedCount);
         dest.writeString(description);
         dest.writeString(endTime);

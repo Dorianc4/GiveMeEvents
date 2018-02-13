@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onItemClick(int position) {
                 FacebookEvent event = myAdapter.getEvents().get(position);
+
                 Intent detIntent = new Intent(MainActivity.this, EventDetails.class);
                 detIntent.putExtra("Event", event);
                 startActivity(detIntent);
