@@ -71,6 +71,7 @@ import it.unical.givemeevents.gui.PicassoCircleTranformation;
 import it.unical.givemeevents.model.EventPlace;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.model.GraphSearchData;
+import it.unical.givemeevents.model.Place;
 import it.unical.givemeevents.network.FacebookGraphManager;
 import it.unical.givemeevents.services.CustomLocationManager;
 import it.unical.givemeevents.util.GiveMeEventUtils;
@@ -205,10 +206,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ev_ShowMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<EventPlace> places = new ArrayList<EventPlace>();
+                ArrayList<Place> places = new ArrayList<Place>();
                 for (int i = 0; i < myAdapter.getItemCount(); i++) {
                     if (myAdapter.getEvents().get(i).getPlace() != null) ;
-                    places.add(myAdapter.getEvents().get(i).getPlace());
+                    if(myAdapter.getEvents().get(i).getPlace()!=null){
+                        places.add(myAdapter.getEvents().get(i).getPlace());
+                    }else if(myAdapter.getEvents().get(i).getPlaceOwner()!=null)
+                    {
+                        places.add(myAdapter.getEvents().get(i).getPlaceOwner());
+                    }
                 }
                 Intent mapIntent = new Intent(MainActivity.this, MapActivity.class);
                 mapIntent.putParcelableArrayListExtra("eventList", places);

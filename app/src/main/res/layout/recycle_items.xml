@@ -112,7 +112,7 @@
                 card_view:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/txt_EvDateMonth"
+                    android:id="@+id/txt_EvDate"
                     android:layout_width="match_parent"
                     android:layout_height="27dp"
                     android:layout_gravity="center_horizontal"

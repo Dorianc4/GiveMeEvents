@@ -10,7 +10,7 @@
 
 
     <ImageView
-        android:id="@+id/img_EvImamge"
+        android:id="@+id/img_EvImage"
         android:layout_width="344dp"
         android:layout_height="226dp"
         android:layout_marginEnd="8dp"
@@ -30,9 +30,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="53dp"
         android:background="@color/cardview_shadow_end_color"
-        app:layout_constraintBottom_toBottomOf="@+id/img_EvImamge"
-        app:layout_constraintEnd_toEndOf="@+id/img_EvImamge"
-        app:layout_constraintTop_toBottomOf="@+id/img_EvImamge"
+        app:layout_constraintBottom_toBottomOf="@+id/img_EvImage"
+        app:layout_constraintEnd_toEndOf="@+id/img_EvImage"
+        app:layout_constraintTop_toBottomOf="@+id/img_EvImage"
         app:srcCompat="@drawable/ic_map" />
 
     <ImageButton
@@ -42,27 +42,28 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
         android:background="@color/cardview_shadow_end_color"
-        app:layout_constraintBottom_toBottomOf="@+id/img_EvImamge"
+        app:layout_constraintBottom_toBottomOf="@+id/img_EvImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_plMap"
-        app:layout_constraintTop_toBottomOf="@+id/img_EvImamge"
+        app:layout_constraintTop_toBottomOf="@+id/img_EvImage"
         app:srcCompat="@drawable/ic_fav_off" />
 
     <TextView
         android:id="@+id/txt_EvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-condensed"
         android:text="Event Name"
+        android:textAlignment="center"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_EvImamge" />
+        app:layout_constraintTop_toBottomOf="@+id/img_EvImage" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -134,7 +135,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_EvPlace" />
 
     <TextView
-        android:id="@+id/txt_EvDateMonth"
+        android:id="@+id/txt_EvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="234dp"
@@ -162,19 +163,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageView5"
-        app:layout_constraintTop_toBottomOf="@+id/txt_EvDateMonth" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_EvDate" />
 
     <TextView
         android:id="@+id/txt_EvDesc"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
         android:fontFamily="sans-serif-condensed"
         android:maxLines="7"
         android:text="Event Description"
         android:textColor="@android:color/background_light"
         android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/txt_EvCategory" />
 

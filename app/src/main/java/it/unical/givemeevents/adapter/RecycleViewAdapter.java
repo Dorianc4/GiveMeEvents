@@ -1,8 +1,6 @@
 package it.unical.givemeevents.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,7 +43,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
             super(itemView);
             evName = (TextView) itemView.findViewById(R.id.txt_EvName);
             evPlace = (TextView) itemView.findViewById(R.id.txt_EvPlace);
-            evMonth = (TextView) itemView.findViewById(R.id.txt_EvDateMonth);
+            evMonth = (TextView) itemView.findViewById(R.id.txt_EvDate);
             evDay = (TextView) itemView.findViewById(R.id.txt_EvDateDay);
             evTime = (TextView) itemView.findViewById(R.id.txt_EvTime);
             evImage = (ImageView) itemView.findViewById(R.id.img_Event);

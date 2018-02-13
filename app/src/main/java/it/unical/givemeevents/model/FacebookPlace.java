@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Created by Manuel on 9/12/2017.
  */
 
-public class FacebookPlace implements Parcelable, Serializable{
+public class FacebookPlace extends Place implements Parcelable, Serializable{
 
     private String id,name,category;
     private  Picture picture;
