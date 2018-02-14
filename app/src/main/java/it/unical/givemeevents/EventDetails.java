@@ -50,6 +50,7 @@ public class EventDetails extends AppCompatActivity {
     private ImageButton btn_Map;
     private ImageButton btn_Calendar;
     private ImageButton btn_Favorite;
+    private ImageButton btn_buyTicket;
     private String Place;
     private Location location;
     private GiveMeEventDbManager dbM;
@@ -75,7 +76,6 @@ public class EventDetails extends AppCompatActivity {
         txt_Name = (TextView) findViewById(R.id.txt_EvName);
         txt_Time = (TextView) findViewById(R.id.txt_EvTime);
         txt_Place = (TextView) findViewById(R.id.txt_EvPlace);
-        txt_Category = (TextView) findViewById(R.id.txt_EvCategory);
         img_Event = (ImageView) findViewById(R.id.img_EvImage);
         btn_Favorite = (ImageButton) findViewById(R.id.btn_plFavorite);
         btn_Map = (ImageButton) findViewById(R.id.btn_plMap);
@@ -185,7 +185,21 @@ public class EventDetails extends AppCompatActivity {
                 CheckandWriteCalendar();
             }
         });
+        if(event.getTickedUri() == null){
+            btn_buyTicket.setVisibility(View.GONE);
+        }else{
+            btn_buyTicket.setVisibility(View.VISIBLE);
+            btn_buyTicket.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GiveMeEventUtils.launchBrowser(EventDetails.this, event.getTickedUri());
+                }
+            });
+        }
+
     }
+
+
 
     public void CheckandWriteCalendar() {
         if (ContextCompat.checkSelfPermission(EventDetails.this,
@@ -202,10 +216,12 @@ public class EventDetails extends AppCompatActivity {
             if (event.getPlace() != null) {
                 String id = event.getPlace().getId();
                 dbM.addorReplaceTrace(id, Time);
+
             } else {
                 String id = event.getPlaceOwner().getId();
                 dbM.addorReplaceTrace(id, Time);
             }
+            dbM.addorReplaceCategoryTrace(event.getPlaceOwner().getCategoryList());
         }
 
     }
