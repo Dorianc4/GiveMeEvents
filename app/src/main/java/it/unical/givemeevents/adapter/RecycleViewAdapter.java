@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import it.unical.givemeevents.MainActivity;
 import it.unical.givemeevents.R;
 import it.unical.givemeevents.database.GiveMeEventDbManager;
 import it.unical.givemeevents.model.FacebookEvent;
@@ -28,10 +29,12 @@ import it.unical.givemeevents.util.GiveMeEventUtils;
 public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder> {
     private OnItemClickListener mListener;
     GiveMeEventDbManager dbM;
-    public void setOnItemClickListener(OnItemClickListener listener){
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
     }
-    public interface OnItemClickListener{
+
+    public interface OnItemClickListener {
         void onItemClick(int position);
 
     }
@@ -54,11 +57,11 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listener!=null){
-                       int position = getAdapterPosition();
-                       if(position!= RecyclerView.NO_POSITION){
-                           listener.onItemClick(position);
-                       }
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
                     }
                 }
             });
@@ -111,17 +114,17 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         if (event.getPicture() != null) {
             Picasso.with(ctx).load(event.getPicture().getData().getUrl()).placeholder(R.drawable.imagen).into(holder.evImage);
         }
-         dbM = new GiveMeEventDbManager(ctx);
-        if(event.getPlace()!=null){
-            if((dbM.existFavPlace(event.getPlace().getId()) )){
+        dbM = new GiveMeEventDbManager(ctx);
+        if (event.getPlace() != null) {
+            if ((dbM.existFavPlace(event.getPlace().getId()))) {
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
-            }else{
+            } else {
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
             }
-        }else{
-            if( (dbM.existFavPlace(event.getPlaceOwner().getId()))){
+        } else {
+            if ((dbM.existFavPlace(event.getPlaceOwner().getId()))) {
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
-            }else{
+            } else {
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
             }
         }
@@ -131,28 +134,35 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
             public void onClick(View v) {
 
                 boolean favorite;
-                if(event.getPlace()!=null){
+                if (event.getPlace() != null) {
                     favorite = dbM.existFavPlace(event.getPlace().getId());
-                }else{
+                } else {
                     favorite = dbM.existFavPlace(event.getPlaceOwner().getId());
                 }
 
                 if (!favorite) {
-                    if(event.getPlace()!=null) {
+                    if (event.getPlace() != null) {
+                        if (event.getPlace().getPicture() == null && event.getPlace().getId().equals(event.getPlaceOwner().getId()) && event.getPlaceOwner().getPicture() != null && event.getPlaceOwner().getPicture().getData().getUrl() != null) {
+                            event.getPlace().setPicture(event.getPlaceOwner().getPicture().getData().getUrl());
+                        }
                         dbM.addFavPlace(event.getPlace());
-                    }else{
+                    } else {
                         dbM.addFavPlaceOwner(event.getPlaceOwner());
                     }
                     holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
-
+                    if (ctx instanceof MainActivity) {
+                        ((MainActivity) ctx).updateFavorites();
+                    }
                 } else {
-                    if(event.getPlace()!=null) {
+                    if (event.getPlace() != null) {
                         dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
-                    }else{
+                    } else {
                         dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
                     }
-
                     holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
+                    if (ctx instanceof MainActivity) {
+                        ((MainActivity) ctx).updateFavorites();
+                    }
                 }
             }
 

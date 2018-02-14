@@ -17,6 +17,15 @@ public class GraphSearchData implements Serializable {
     private String authToken;
     private String[] categories;
     private String Name;
+    private boolean onMyFavorites;
+
+    public boolean isOnMyFavorites() {
+        return onMyFavorites;
+    }
+
+    public void setOnMyFavorites(boolean onMyFavorites) {
+        this.onMyFavorites = onMyFavorites;
+    }
 
     public String getName() {
         return Name;

@@ -56,7 +56,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes;
 
 import it.unical.givemeevents.adapter.RecycleViewAdapter;
 import it.unical.givemeevents.database.GiveMeEventDbManager;
@@ -94,17 +93,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView imageViewAccount;
     private TextView textViewNameAccount;
     private ImageButton favoriteButton;
-    private String serachName;
+    private String searchName;
     private TextView txt_Status;
-
-    public MainActivity() {
-        serachName = "your current location.";
-    }
 
     @Override
     protected void onResume() {
+        updateFavorites();
         super.onResume();
-        favoritesPlaces = dbManager.getAllFavPlaces();
     }
 
     @Override
@@ -124,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        searchName = getString(R.string.search_current_location_msg);
         ////////////////////////////////////////////////////////
 
         ////////////////////FACEBOOK LOGIN///////////////////////
@@ -142,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onLocationChanged(Location location) {
                 gsd.setLatitud(location.getLatitude());
                 gsd.setLongitud(location.getLongitude());
+                gsd.setOnMyFavorites(false);
+                searchName = getString(R.string.search_current_location_msg);
                 perform();
                 locManager.removeUpdates(this);
             }
@@ -251,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Location location = locManager.getLastKnownLocation();
                 gsd.setLatitud(location.getLatitude());
                 gsd.setLongitud(location.getLongitude());
+                gsd.setOnMyFavorites(false);
                 perform();
 //                perform(loc.getLatitude(), loc.getLongitude());
             } else if (lastLoc != null && !lastLoc.isEmpty()) {
@@ -258,11 +257,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String[] aux = lastLoc.split(",");
                 gsd.setLatitud(Double.parseDouble(aux[0]));
                 gsd.setLongitud(Double.parseDouble(aux[1]));
+                gsd.setOnMyFavorites(false);
                 perform();
 //                perform(, );
             } else {
 //                locManager.isLocationEnabled()
 //                locManager.getLocation(locListener);
+                gsd.setOnMyFavorites(false);
                 requestLocation();
             }
         }
@@ -273,11 +274,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (graph.getLongitud() == 0 && graph.getLatitud() == 0) {
                 graph.setLongitud(gsd.getLongitud());
                 graph.setLatitud(gsd.getLatitud());
-                serachName = "your current location.";
+                searchName = "your current location.";
+                gsd.setName(searchName);
             }
 
             gsd = graph;
-            serachName = gsd.getName();
+            searchName = gsd.getName();
             perform();
         }
     }
@@ -301,7 +303,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected List<FacebookEvent> doInBackground(Void[] objects) {
                 if (!this.isCancelled()) {
-                    List<String> ids = graphManager.findPlacesId(gsd);
+                    List<String> ids = new ArrayList<>();
+                    if (gsd.isOnMyFavorites()) {
+                        ids = getFavoritesPlacesId();
+                        searchName = getString(R.string.search_favorites_msg);
+                    } else {
+                        ids = graphManager.findPlacesId(gsd);
+                    }
 //                //adapter = new EventAdapter(MainActivity.this, new ArrayList<FacebookEvent>());
 //                    myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), MainActivity.this);
                     Log.d("CANTIDAD", ids.size() + "");
@@ -375,16 +383,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 progressBarFind.setVisibility(View.GONE);
                 int distance = gsd.getDistance();
                 String meas = "";
-                if(distance == 500){
+                if (distance == 500) {
                     meas = "m";
-                }else{
+                } else {
                     meas = "Km";
                 }
-                String StatusMessage = "Displaying events finded " + distance + meas+ " around " + serachName + " ";
+                String StatusMessage = "Displaying events finded " + distance + meas + " around " + searchName + " ";
 
-                txt_Status.setText(StatusMessage);
-                txt_Status.setSelected(true);
-                txt_Status.setVisibility(View.VISIBLE);
+                if (myAdapter.getEvents().size() > 0) {
+                    txt_Status.setText(StatusMessage);
+                    txt_Status.setSelected(true);
+                    txt_Status.setVisibility(View.VISIBLE);
+                } else {
+                    txt_Status.setVisibility(View.GONE);
+                }
             }
         }.execute();
     }
@@ -625,5 +637,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             transaction.add(R.id.drawer_layout, fDialog)
                     .addToBackStack(null).commit();
         }
+    }
+
+    private List<String> getFavoritesPlacesId() {
+        List<String> placesId = new ArrayList<>();
+        for (EventPlace place : favoritesPlaces) {
+            placesId.add(place.getId());
+        }
+        return placesId;
+    }
+
+    public void updateFavorites() {
+        AsyncTask<Void, Void, Void> async = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                favoritesPlaces = dbManager.getAllFavPlaces();
+                return null;
+            }
+        }.execute();
     }
 }

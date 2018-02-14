@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -108,6 +109,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
         Toolbar toolbar = findViewById(R.id.tool_Map);
         toolbar.setTitle(getString(R.string.map_activity));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
         //mGps = (ImageView) findViewById(R.id.ic_gps);
         getLocationPermission();
@@ -253,6 +263,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         String evName = "";
         for(int i = 0; i < places.size(); i++){
 
+            if(places.get(i).getLocation()==null){
+                continue;
+            }
             latitude = places.get(i).getLocation().getLatitude();
             longitude = places.get(i).getLocation().getLongitude();
             evName = places.get(i).getName();

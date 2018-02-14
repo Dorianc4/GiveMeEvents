@@ -2,13 +2,10 @@ package it.unical.givemeevents.gui;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,7 +23,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,8 +42,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
 import it.unical.givemeevents.MainActivity;
-import it.unical.givemeevents.MapActivity;
 import it.unical.givemeevents.R;
 import it.unical.givemeevents.adapter.PlacesAutoCompleteAdapter;
 import it.unical.givemeevents.model.GraphSearchData;
@@ -61,7 +57,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
  */
 
 public class FilterSearchDialog extends DialogFragment implements View.OnClickListener,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
     private int distance;
     private Date sinceD;
@@ -85,8 +81,8 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
     private GoogleApiClient mGoogleApiClient;
     private PlaceInfo myPlace;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
-            new LatLng(-40,-168), new LatLng(71, 136));
-
+            new LatLng(-40, -168), new LatLng(71, 136));
+    private CheckBox onMyFavoritesCheck;
 
     public static FilterSearchDialog newInstance() {
         FilterSearchDialog frag = new FilterSearchDialog();
@@ -116,13 +112,13 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                     spinner.setSelection(1, true);
                     break;
                 case 3000:
-                    spinner.setSelection(1, true);
-                    break;
-                case 5000:
                     spinner.setSelection(2, true);
                     break;
-                case 10000:
+                case 5000:
                     spinner.setSelection(3, true);
+                    break;
+                case 10000:
+                    spinner.setSelection(4, true);
                     break;
                 default:
                     spinner.setSelection(0, true);
@@ -133,6 +129,9 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             for (int i = 0; i < searchData.getCategories().length; i++) {
                 manageCheckBoxes(cats.indexOf(searchData.getCategories()[i]));
             }
+            ////////ON MY FAVORITES//////////////////////////////
+            onMyFavoritesCheck.setChecked(searchData.isOnMyFavorites());
+            disableEnableAll(!searchData.isOnMyFavorites());
 
         }
     }
@@ -184,6 +183,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
         checkBox7 = view.findViewById(R.id.checkBox7);
         checkBox8 = view.findViewById(R.id.checkBox8);
         mSearchText = view.findViewById(R.id.input_search);
+        onMyFavoritesCheck = view.findViewById(R.id.onMyFavorites);
 
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_dialog_search);
@@ -207,7 +207,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                     gsd.setDistance(distance);
                     gsd.setSince(sinceD);
                     gsd.setUntil(untilD);
-                    if(myPlace!=null){
+                    if (myPlace != null) {
                         double latitude = myPlace.getCoordinates().latitude;
                         double longitude = myPlace.getCoordinates().longitude;
                         gsd.setLatitud(latitude);
@@ -219,6 +219,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                     } else {
                         gsd.setCategories(categoriesAux);
                     }
+                    gsd.setOnMyFavorites(onMyFavoritesCheck.isChecked());
                     ((MainActivity) getActivity()).performExternal(gsd);
                     dismiss();
                 }
@@ -234,6 +235,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
         checkBox6.setOnClickListener(this);
         checkBox7.setOnClickListener(this);
         checkBox8.setOnClickListener(this);
+        onMyFavoritesCheck.setOnClickListener(this);
 
         ((Spinner) view.findViewById(R.id.spinnerDistance)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -323,7 +325,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                 .Builder(getContext())
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity() , this)
+                .enableAutoManage(getActivity(), this)
                 .build();
         mGeoDataClient = Places.getGeoDataClient(getContext(), null);
 
@@ -333,10 +335,10 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER) {
                     //execute Search Method
                     //geoLocate();
 
@@ -351,6 +353,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
     public void onCheckBoxClicked(View check) {
 
     }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -437,15 +440,18 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             case R.id.checkBox8:
                 addOrRemove(checked, 7);
                 break;
+            case R.id.onMyFavorites:
+                disableEnableAll(!onMyFavoritesCheck.isChecked());
+                break;
         }
 
     }
 
 
-    public void HideSoftKeyboard(View view){
+    public void HideSoftKeyboard(View view) {
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         InputMethodManager myKeyboard = (InputMethodManager) this.getActivity().getSystemService(INPUT_METHOD_SERVICE);
-        myKeyboard.hideSoftInputFromWindow(view.getWindowToken(),0);
+        myKeyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     //------------------------------
@@ -456,7 +462,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             HideSoftKeyboard(mSearchText);
             final AutocompletePrediction item = myAdapter.getItem(position);
             final String placeId = item.getPlaceId();
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallBack);
 
         }
@@ -464,13 +470,13 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallBack = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(@NonNull PlaceBuffer places) {
-            if(!places.getStatus().isSuccess()){
-               // Log.d(TAG, "onResult: Place Query did not completed sucessfully:" + places.getStatus().toString());
+            if (!places.getStatus().isSuccess()) {
+                // Log.d(TAG, "onResult: Place Query did not completed sucessfully:" + places.getStatus().toString());
                 places.release();
                 return;
             }
             final Place place = places.get(0);
-            try{
+            try {
                 myPlace = new PlaceInfo();
                 myPlace.setAddress(place.getAddress().toString());
                 myPlace.setCoordinates(place.getLatLng());
@@ -479,10 +485,10 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                 myPlace.setPhoneNumber(place.getPhoneNumber().toString());
                 myPlace.setRating(place.getRating());
                 myPlace.setWebSite(place.getWebsiteUri());
-               // Log.d(TAG, "OnResult: place:" + myPlace.toString());
+                // Log.d(TAG, "OnResult: place:" + myPlace.toString());
 
                 //Toast.makeText(getContext(), myPlace.toString(), Toast.LENGTH_LONG).show();
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 //Log.e(TAG, "OnResult: NullPointerEception:" + e.getMessage());
             }
 
@@ -491,11 +497,22 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
     };
 
 
-
     @Override
     public void onStop() {
         super.onStop();
         mGoogleApiClient.stopAutoManage(getActivity());
         mGoogleApiClient.disconnect();
+    }
+
+    private void disableEnableAll(boolean enable) {
+        spinner.setEnabled(enable);
+        checkBox.setEnabled(enable);
+        checkBox2.setEnabled(enable);
+        checkBox3.setEnabled(enable);
+        checkBox4.setEnabled(enable);
+        checkBox5.setEnabled(enable);
+        checkBox6.setEnabled(enable);
+        checkBox7.setEnabled(enable);
+        checkBox8.setEnabled(enable);
     }
 }

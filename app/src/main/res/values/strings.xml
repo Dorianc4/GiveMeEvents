@@ -77,6 +77,8 @@
     <string name="permission_denied">Permission denied</string>
     <string name="prefs_name">it.unical.givemeevents.Shared_Preferences</string>
     <string name="last_location">lastLocation</string>
+    <string name="search_current_location_msg">your current location.</string>
+    <string name="search_favorites_msg">your favorites places.</string>
     <string name="my_location_msg">My location</string>
     <string name="search_msg">Filter Search</string>
     <string name="logout_label_msg">Logout</string>
@@ -113,5 +115,7 @@
     <string name="add_calendar_msg">Do you want to add this event to the calendar?</string>
     <string name="added_calendar_msg">The event was added to the calendar</string>
     <string name="non_added_calendar_msg">The event was not added to the calendar</string>
+    <string name="search_on_favorites">On my favorites</string>
+    <string name="event_details_msg">Events Details</string>
 
 </resources>

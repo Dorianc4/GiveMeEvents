@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import it.unical.givemeevents.database.GiveMeEventDbManager;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -57,9 +58,18 @@ public class EventDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_details);
         setSupportActionBar(toolbar);
-        txt_Adress =(TextView) findViewById(R.id.txt_EvAddress);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        txt_Adress = (TextView) findViewById(R.id.txt_EvAddress);
         txt_Date = ((TextView) findViewById(R.id.txt_EvDate));
         txt_Description = (TextView) findViewById(R.id.txt_EvDesc);
         txt_Name = (TextView) findViewById(R.id.txt_EvName);
@@ -83,17 +93,17 @@ public class EventDetails extends AppCompatActivity {
         String Time = GiveMeEventUtils.createStringfromDate(evdate, "HH:mm");
 
 
-        String Address= "";
+        String Address = "";
 
         if (event.getPlace() != null) {
-             Place = event.getPlace().getName();
-             Address = event.getPlace().getLocation().getStreet() + ", " + event.getPlace().getLocation().getCity() + ", " +
+            Place = event.getPlace().getName();
+            Address = event.getPlace().getLocation().getStreet() + ", " + event.getPlace().getLocation().getCity() + ", " +
                     event.getPlace().getLocation().getZip() + ", " + event.getPlace().getLocation().getCountry();
-             location = event.getPlace().getLocation();
+            location = event.getPlace().getLocation();
 
 
         } else if (event.getPlaceOwner() != null) {
-             Place = event.getPlaceOwner().getName();
+            Place = event.getPlaceOwner().getName();
 
             Address = event.getPlaceOwner().getLocation().getStreet() + ", " + event.getPlaceOwner().getLocation().getCity() + ", " +
                     event.getPlaceOwner().getLocation().getZip() + ", " + event.getPlaceOwner().getLocation().getCountry();
@@ -126,47 +136,47 @@ public class EventDetails extends AppCompatActivity {
             }
         });
         dbM = new GiveMeEventDbManager(EventDetails.this);
-        if(event.getPlace()!=null){
-            if((dbM.existFavPlace(event.getPlace().getId()) )){
+        if (event.getPlace() != null) {
+            if ((dbM.existFavPlace(event.getPlace().getId()))) {
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
-            }else{
+            } else {
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
             }
-        }else{
-            if( (dbM.existFavPlace(event.getPlaceOwner().getId()))){
+        } else {
+            if ((dbM.existFavPlace(event.getPlaceOwner().getId()))) {
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
-            }else{
+            } else {
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
             }
         }
         btn_Favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    boolean favorite;
-                    if(event.getPlace()!=null){
-                        favorite = dbM.existFavPlace(event.getPlace().getId());
-                    }else{
-                        favorite = dbM.existFavPlace(event.getPlaceOwner().getId());
-                    }
-
-                    if (!favorite) {
-                        if(event.getPlace()!=null) {
-                            dbM.addFavPlace(event.getPlace());
-                        }else{
-                            dbM.addFavPlaceOwner(event.getPlaceOwner());
-                        }
-                        btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
-
-                    } else {
-                        if(event.getPlace()!=null) {
-                            dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
-                        }else{
-                            dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
-                        }
-
-                        btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
-                    }
+                boolean favorite;
+                if (event.getPlace() != null) {
+                    favorite = dbM.existFavPlace(event.getPlace().getId());
+                } else {
+                    favorite = dbM.existFavPlace(event.getPlaceOwner().getId());
                 }
+
+                if (!favorite) {
+                    if (event.getPlace() != null) {
+                        dbM.addFavPlace(event.getPlace());
+                    } else {
+                        dbM.addFavPlaceOwner(event.getPlaceOwner());
+                    }
+                    btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
+
+                } else {
+                    if (event.getPlace() != null) {
+                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                    } else {
+                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                    }
+
+                    btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
+                }
+            }
         });
 
         btn_Calendar.setOnClickListener(new View.OnClickListener() {
@@ -177,22 +187,22 @@ public class EventDetails extends AppCompatActivity {
         });
     }
 
-    public void CheckandWriteCalendar(){
+    public void CheckandWriteCalendar() {
         if (ContextCompat.checkSelfPermission(EventDetails.this,
                 Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(EventDetails.this,  new String[] {  Manifest.permission.WRITE_CALENDAR},
+            ActivityCompat.requestPermissions(EventDetails.this, new String[]{Manifest.permission.WRITE_CALENDAR},
                     GiveMeEventUtils.WRITE_CALENDAR_CODE);
 
-        }else{
+        } else {
             GiveMeEventUtils.addEventToCalendar(EventDetails.this, event);
             Date evdate = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
             SimpleDateFormat myFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 
             String Time = GiveMeEventUtils.createStringfromDate(evdate, "HH:mm");
-            if(event.getPlace()!=null) {
+            if (event.getPlace() != null) {
                 String id = event.getPlace().getId();
                 dbM.addorReplaceTrace(id, Time);
-            }else{
+            } else {
                 String id = event.getPlaceOwner().getId();
                 dbM.addorReplaceTrace(id, Time);
             }
