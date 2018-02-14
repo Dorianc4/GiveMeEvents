@@ -56,6 +56,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
 
 import it.unical.givemeevents.adapter.RecycleViewAdapter;
 import it.unical.givemeevents.database.GiveMeEventDbManager;
@@ -93,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView imageViewAccount;
     private TextView textViewNameAccount;
     private ImageButton favoriteButton;
+    private String serachName;
+    private TextView txt_Status;
+
+    public MainActivity() {
+        serachName = "your current location.";
+    }
 
     @Override
     protected void onResume() {
@@ -171,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         progressBarFind = findViewById(R.id.progressBarFind);
+        txt_Status = findViewById(R.id.txt_StatusMessage);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             progressBarFind.getIndeterminateDrawable().setColorFilter(getResources().getColor(android.R.color.background_light, null), PorterDuff.Mode.SRC_IN);
         } else {
@@ -233,7 +241,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void validateAndPerformFind() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, GiveMeEventUtils.ACCESS_FINE_LOCATION_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    GiveMeEventUtils.ACCESS_FINE_LOCATION_CODE);
         } else {
             SharedPreferences prefs = GiveMeEventUtils.getPreferences(this);
             String lastLoc = GiveMeEventUtils.getPreferences(this).getString(getString(R.string.last_location), null);
@@ -261,13 +270,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void performExternal(GraphSearchData graph) {
         if (graph != null) {
-            if (graph.getLongitud() == 0) {
+            if (graph.getLongitud() == 0 && graph.getLatitud() == 0) {
                 graph.setLongitud(gsd.getLongitud());
-            }
-            if (graph.getLatitud() == 0) {
                 graph.setLatitud(gsd.getLatitud());
+                serachName = "your current location.";
             }
+
             gsd = graph;
+            serachName = gsd.getName();
             perform();
         }
     }
@@ -285,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onPreExecute() {
                 super.onPreExecute();
                 progressBarFind.setVisibility(View.VISIBLE);
+                txt_Status.setVisibility(View.GONE);
             }
 
             @Override
@@ -362,6 +373,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                adapter.setEvents(events);
 //                adapter.notifyDataSetChanged();
                 progressBarFind.setVisibility(View.GONE);
+                int distance = gsd.getDistance();
+                String meas = "";
+                if(distance == 500){
+                    meas = "m";
+                }else{
+                    meas = "Km";
+                }
+                String StatusMessage = "Displaying events finded " + distance + meas+ " around " + serachName + " ";
+
+                txt_Status.setText(StatusMessage);
+                txt_Status.setSelected(true);
+                txt_Status.setVisibility(View.VISIBLE);
             }
         }.execute();
     }

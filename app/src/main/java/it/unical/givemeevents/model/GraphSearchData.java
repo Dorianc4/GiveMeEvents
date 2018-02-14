@@ -16,6 +16,15 @@ public class GraphSearchData implements Serializable {
     private boolean showActiveOnly;
     private String authToken;
     private String[] categories;
+    private String Name;
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
 
     public GraphSearchData(int distance, String[] categories) {
         this.distance = distance;

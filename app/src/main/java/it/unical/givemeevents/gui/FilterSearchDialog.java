@@ -2,6 +2,7 @@ package it.unical.givemeevents.gui;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -206,6 +207,13 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                     gsd.setDistance(distance);
                     gsd.setSince(sinceD);
                     gsd.setUntil(untilD);
+                    if(myPlace!=null){
+                        double latitude = myPlace.getCoordinates().latitude;
+                        double longitude = myPlace.getCoordinates().longitude;
+                        gsd.setLatitud(latitude);
+                        gsd.setLongitud(longitude);
+                        gsd.setName(myPlace.getName());
+                    }
                     if (!categories.isEmpty()) {
                         gsd.setCategories(categories.toArray(new String[categories.size()]));
                     } else {
@@ -331,6 +339,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
                     //execute Search Method
                     //geoLocate();
+
                 }
                 return false;
             }
@@ -433,22 +442,23 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
     }
 
 
-    /*public void HideSoftKeyboard(View view){
+    public void HideSoftKeyboard(View view){
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        InputMethodManager myKeyboard = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        InputMethodManager myKeyboard = (InputMethodManager) this.getActivity().getSystemService(INPUT_METHOD_SERVICE);
         myKeyboard.hideSoftInputFromWindow(view.getWindowToken(),0);
-    }*/
+    }
 
     //------------------------------
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //HideSoftKeyboard(mSearchText);
+            HideSoftKeyboard(mSearchText);
             final AutocompletePrediction item = myAdapter.getItem(position);
             final String placeId = item.getPlaceId();
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallBack);
+
         }
     };
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallBack = new ResultCallback<PlaceBuffer>() {
@@ -463,7 +473,6 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             try{
                 myPlace = new PlaceInfo();
                 myPlace.setAddress(place.getAddress().toString());
-
                 myPlace.setCoordinates(place.getLatLng());
                 myPlace.setId(place.getId());
                 myPlace.setName(place.getName().toString());
@@ -471,7 +480,8 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                 myPlace.setRating(place.getRating());
                 myPlace.setWebSite(place.getWebsiteUri());
                // Log.d(TAG, "OnResult: place:" + myPlace.toString());
-                Toast.makeText(getContext(), myPlace.toString(), Toast.LENGTH_LONG).show();
+
+                //Toast.makeText(getContext(), myPlace.toString(), Toast.LENGTH_LONG).show();
             }catch (NullPointerException e){
                 //Log.e(TAG, "OnResult: NullPointerEception:" + e.getMessage());
             }
@@ -479,6 +489,8 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             places.release();
         }
     };
+
+
 
     @Override
     public void onStop() {
