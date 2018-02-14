@@ -55,6 +55,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import it.unical.givemeevents.adapter.RecycleViewAdapter;
@@ -192,11 +194,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             validateAndPerformFind();
         }
 
-        dbManager = new GiveMeEventDbManager(this);
+//        dbManager = new GiveMeEventDbManager(this);
+//        try {
+//            suggestEvents();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
 //        dbManager.addorReplaceFavPlace(new EventPlace("213213", "Unical", null, ""));
-        List<EventPlace> a = dbManager.getAllFavPlaces();
+//        List<EventPlace> a = dbManager.getAllFavPlaces();
 //        a.moveToNext();
-        Log.d("FROMDATABASE", a + "");
+//        Log.d("FROMDATABASE", a + "");
 
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
         evQuant = (TextView) findViewById(R.id.txt_evQuantity);
@@ -426,9 +434,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_location) {
+//        if (id == R.id.action_settings) {
+//            return true;
+//        } else
+        if (id == R.id.action_location) {
             requestLocation();
         } else if (id == R.id.action_search) {
             openFilterSearch();
@@ -655,5 +664,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return null;
             }
         }.execute();
+    }
+
+    private void suggestEvents() throws JSONException {
+
+        List<String> idPlaces = dbManager.getPlacesMostVisited();
+        List<String> dos = dbManager.getCategoriesMostVisited();
+        int tres = dbManager.getTimeMostCommon();
+        List<FacebookEvent> events = new ArrayList<>();
+        if (idPlaces.size() > 0) {
+            GraphSearchData graphSearchData = new GraphSearchData();
+            Calendar today = new GregorianCalendar();
+            Calendar nextWeek = new GregorianCalendar();
+            nextWeek.add(Calendar.DATE, 15);
+            graphSearchData.setSince(today.getTime());
+            graphSearchData.setUntil(nextWeek.getTime());
+            events = graphManager.findEvents(idPlaces, graphSearchData);
+            int a = 0;
+
+
+        }
+
     }
 }

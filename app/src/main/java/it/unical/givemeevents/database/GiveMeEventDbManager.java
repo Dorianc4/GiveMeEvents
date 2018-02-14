@@ -234,4 +234,76 @@ public class GiveMeEventDbManager {
         }
         db.close();
     }
+
+    public List<String> getCategoriesMostVisited() {
+
+        SQLiteDatabase db = openhelper.getReadableDatabase();
+        if (db == null) {
+            return null;
+        }
+        List<String> ids = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT id_category FROM " + GiveMeEventsDbHelper.CATEGORY_TRACE_TABLE_NAME + " GROUP BY id_category ORDER BY count(id_category) DESC LIMIT 5", null);
+        while (cursor.moveToNext()) {
+            ids.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return ids;
+    }
+
+    public List<String> getPlacesMostVisited() {
+
+        SQLiteDatabase db = openhelper.getReadableDatabase();
+        if (db == null) {
+            return null;
+        }
+        List<String> ids = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT id_place FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " GROUP BY id_place ORDER BY count(id_place) DESC LIMIT 5", null);
+        while (cursor.moveToNext()) {
+            ids.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return ids;
+    }
+
+    public int getTimeMostCommon() {
+
+        SQLiteDatabase db = openhelper.getReadableDatabase();
+        if (db == null) {
+            return 0;
+        }
+        int fnal = 0;
+        //////DAY COUNT///////
+        Cursor cursor = db.rawQuery("SELECT count(start_time) as day FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"07:00", "13:00"});
+        int day = 0;
+        if (cursor.moveToNext()) {
+            day = cursor.getInt(0);
+        }
+        cursor.close();
+
+        //////AFTERNOON///////
+        Cursor cursor1 = db.rawQuery("SELECT count(start_time) as afternoon FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"13:00", "21:00"});
+        int after = 0;
+        if (cursor1.moveToNext()) {
+            after = cursor1.getInt(0);
+        }
+        cursor1.close();
+
+        //////AFTERNOON///////
+        Cursor cursor2 = db.rawQuery("SELECT count(start_time) as night FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"21:00", "07:00"});
+        int night = 0;
+        if (cursor2.moveToNext()) {
+            night = cursor2.getInt(0);
+        }
+        cursor2.close();
+        if (night >= after && night >= day) {
+            fnal = 3;
+        } else if (after >= night && after > +day) {
+            fnal = 2;
+        } else if (day >= night && day >= after) {
+            fnal = 1;
+        }
+        return fnal;
+    }
 }

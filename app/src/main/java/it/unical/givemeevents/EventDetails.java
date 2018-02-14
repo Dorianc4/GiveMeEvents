@@ -82,7 +82,7 @@ public class EventDetails extends AppCompatActivity {
         btn_Calendar = (ImageButton) findViewById(R.id.btn_AddCalendar);
 
         event = getIntent().getParcelableExtra("Event");
-        int i = 0;
+        //int i = 0;
 
         String Name = event.getName();
         String Description = event.getDescription();
