@@ -415,10 +415,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        } else
         if (id == R.id.action_search) {
             openFilterSearch();
+        } else if (id == R.id.nav_favorites) {
+            showFavorites(null);
         }
-// else if (id == R.id.nav_manage) {
-
-//        } else if (id == R.id.nav_share) {
+// else if (id == R.id.nav_share) {
 //
 //        } else if (id == R.id.nav_send) {
 

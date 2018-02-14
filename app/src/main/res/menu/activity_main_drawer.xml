@@ -16,13 +16,14 @@
             android:id="@+id/action_search"
             android:icon="@drawable/ic_menu_search"
             android:title="@string/search_msg"/>
-        <!--<item-->
-            <!--android:id="@+id/nav_manage"-->
-            <!--android:icon="@drawable/ic_menu_manage"-->
-            <!--android:title="Tools" />-->
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_fav_on_gray"
+            android:title="@string/favorites_msg"/>
         <item
             android:id="@+id/nav_logout"
-            android:title="Logout" />
+            android:title="@string/logout_label_msg"
+            android:icon="@drawable/ic_logout"/>
     </group>
 
     <!--<item android:title="Communicate">-->

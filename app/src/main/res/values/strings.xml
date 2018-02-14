@@ -78,6 +78,7 @@
     <string name="last_location">lastLocation</string>
     <string name="my_location_msg">My location</string>
     <string name="search_msg">Filter Search</string>
+    <string name="logout_label_msg">Logout</string>
     <string name="favorites_msg">Favorites Places</string>
     <string name="location_active_msg">Location service not active. Do you want to active it?</string>
     <string name="distance_label">Distance</string>
