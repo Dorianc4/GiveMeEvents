@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import android.widget.AutoCompleteTextView;
@@ -90,7 +91,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         init();
         if(single_event){
             ShowonMap();
@@ -103,6 +106,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        Toolbar toolbar = findViewById(R.id.tool_Map);
+        toolbar.setTitle(getString(R.string.map_activity));
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
         //mGps = (ImageView) findViewById(R.id.ic_gps);
         getLocationPermission();

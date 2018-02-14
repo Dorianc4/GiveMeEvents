@@ -62,7 +62,8 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".MapActivity" />
+        <activity android:name=".MapActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".EventDetails"
             android:label="@string/title_activity_event_details"
