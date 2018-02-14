@@ -75,9 +75,9 @@ public class EventAdapter extends BaseAdapter {
             view = LayoutInflater.from(ctx).inflate(R.layout.eventlist_layout, null);
             viewHolder = new ViewHolder();
             viewHolder.name = view.findViewById(R.id.textViewName);
-            viewHolder.placeName = view.findViewById(R.id.textViewPlaceName);
+            viewHolder.placeName = view.findViewById(R.id.textViewStreet);
             viewHolder.cover = view.findViewById(R.id.imageViewCover);
-            viewHolder.category = view.findViewById(R.id.textViewCategory);
+            viewHolder.category = view.findViewById(R.id.textViewCity);
             viewHolder.details = view.findViewById(R.id.textViewDetails);
             view.setTag(viewHolder);
         }else{

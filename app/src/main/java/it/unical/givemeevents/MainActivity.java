@@ -59,6 +59,7 @@ import java.util.List;
 
 import it.unical.givemeevents.adapter.RecycleViewAdapter;
 import it.unical.givemeevents.database.GiveMeEventDbManager;
+import it.unical.givemeevents.gui.FavoritesDialog;
 import it.unical.givemeevents.gui.FilterSearchDialog;
 import it.unical.givemeevents.gui.PicassoCircleTranformation;
 import it.unical.givemeevents.model.EventPlace;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FacebookGraphManager graphManager;
     private ImageView imageViewAccount;
     private TextView textViewNameAccount;
+    private ImageButton favoriteButton;
 
     @Override
     protected void onResume() {
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
         evQuant = (TextView) findViewById(R.id.txt_evQuantity);
         ev_ShowMap = (ImageButton) findViewById(R.id.btn_allMap);
-        //pl_Favorites = (ImageButton) findViewById(R.id.btn_mFavorites);
+        favoriteButton = findViewById(R.id.btn_mFavorites);
 
         ev_ShowMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -577,6 +579,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onError(FacebookException error) {
             Log.d("ERROR", error.getMessage());
             manageLoginAction();
+        }
+    }
+
+    public void showFavorites(View view) {
+        FavoritesDialog fDialog = FavoritesDialog.newInstance();
+        Bundle b = new Bundle();
+        b.putSerializable("favorites", (ArrayList<EventPlace>) favoritesPlaces);
+        fDialog.setArguments(b);
+        fDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (isLargeLayout) {
+            fDialog.show(fragmentManager, "favorites_dialog");
+        } else {
+//            FilterSearchDialog.newInstance().show(getSupportFragmentManager(), getString(R.string.search_msg));
+            // The device is smaller, so show the fragment fullscreen
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            // For a little polish, specify a transition animation
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            // To make it fullscreen, use the 'content' root view as the container
+            // for the fragment, which is always the root view for the activity
+            transaction.add(R.id.drawer_layout, fDialog)
+                    .addToBackStack(null).commit();
         }
     }
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,12 +10,11 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/cardview_dark_background" />
+        app:srcCompat="@drawable/ic_location" />
 
     <TextView
         android:id="@+id/textViewName"
@@ -25,6 +23,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:text="Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/colorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.018"
         app:layout_constraintStart_toEndOf="@+id/imageViewCover"
@@ -38,6 +38,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="Place"
+        android:textColor="@color/colorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.036"
         app:layout_constraintStart_toEndOf="@+id/imageViewCover"
@@ -51,19 +52,21 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="Category"
+        android:textColor="@color/colorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageViewCover"
         app:layout_constraintTop_toBottomOf="@+id/textViewStreet" />
 
     <TextView
-        android:id="@+id/textViewDetails"
+        android:id="@+id/textViewCountry"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="Details"
+        android:textColor="@color/colorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageViewCover"

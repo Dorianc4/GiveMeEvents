@@ -478,4 +478,11 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
             places.release();
         }
     };
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
+    }
 }

@@ -3,11 +3,13 @@ package it.unical.givemeevents.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class EventPlace implements Parcelable {
+public class EventPlace implements Parcelable, Serializable {
 
     private String id;
     private String name;
