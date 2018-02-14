@@ -184,6 +184,7 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
         checkBox8 = view.findViewById(R.id.checkBox8);
         mSearchText = view.findViewById(R.id.input_search);
 
+
         Toolbar toolbar = view.findViewById(R.id.toolbar_dialog_search);
         toolbar.setTitle(getActivity().getString(R.string.search_msg));
 //        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);

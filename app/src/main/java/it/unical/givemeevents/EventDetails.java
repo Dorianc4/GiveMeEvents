@@ -169,6 +169,18 @@ public class EventDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 GiveMeEventUtils.addEventToCalendar(EventDetails.this, event);
+                Date evdate = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
+                SimpleDateFormat myFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+
+                String Time = GiveMeEventUtils.createStringfromDate(evdate, "HH:mm");
+                if(event.getPlace()!=null) {
+                    String id = event.getPlace().getId();
+                    dbM.addorReplaceTrace(id, Time);
+                }else{
+                    String id = event.getPlaceOwner().getId();
+                    dbM.addorReplaceTrace(id, Time);
+                }
+
             }
         });
     }
