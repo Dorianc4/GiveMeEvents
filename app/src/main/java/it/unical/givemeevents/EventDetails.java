@@ -1,14 +1,19 @@
 package it.unical.givemeevents;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -122,13 +127,13 @@ public class EventDetails extends AppCompatActivity {
         });
         dbM = new GiveMeEventDbManager(EventDetails.this);
         if(event.getPlace()!=null){
-            if((dbM.existFavPlace(new Long(event.getPlace().getId())) )){
+            if((dbM.existFavPlace(event.getPlace().getId()) )){
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
             }else{
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
             }
         }else{
-            if( (dbM.existFavPlace(new Long(event.getPlaceOwner().getId())))){
+            if( (dbM.existFavPlace(event.getPlaceOwner().getId()))){
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
             }else{
                 btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
@@ -137,52 +142,77 @@ public class EventDetails extends AppCompatActivity {
         btn_Favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                boolean favorite;
-                if(event.getPlace()!=null){
-                    favorite = dbM.existFavPlace(new Long(event.getPlace().getId()));
-                }else{
-                    favorite = dbM.existFavPlace(new Long(event.getPlaceOwner().getId()));
-                }
-
-                if (!favorite) {
-                    if(event.getPlace()!=null) {
-                        dbM.addFavPlace(event.getPlace());
+                    boolean favorite;
+                    if(event.getPlace()!=null){
+                        favorite = dbM.existFavPlace(event.getPlace().getId());
                     }else{
-                        dbM.addFavPlaceOwner(event.getPlaceOwner());
-                    }
-                    btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
-
-                } else {
-                    if(event.getPlace()!=null) {
-                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
-                    }else{
-                        dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                        favorite = dbM.existFavPlace(event.getPlaceOwner().getId());
                     }
 
-                    btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
+                    if (!favorite) {
+                        if(event.getPlace()!=null) {
+                            dbM.addFavPlace(event.getPlace());
+                        }else{
+                            dbM.addFavPlaceOwner(event.getPlaceOwner());
+                        }
+                        btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_on));
+
+                    } else {
+                        if(event.getPlace()!=null) {
+                            dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                        }else{
+                            dbM.deleteFavEvent(new Long(event.getPlaceOwner().getId()));
+                        }
+
+                        btn_Favorite.setImageDrawable(getResources().getDrawable(R.drawable.ic_fav_off));
+                    }
                 }
-            }
         });
 
         btn_Calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GiveMeEventUtils.addEventToCalendar(EventDetails.this, event);
-                Date evdate = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
-                SimpleDateFormat myFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
-
-                String Time = GiveMeEventUtils.createStringfromDate(evdate, "HH:mm");
-                if(event.getPlace()!=null) {
-                    String id = event.getPlace().getId();
-                    dbM.addorReplaceTrace(id, Time);
-                }else{
-                    String id = event.getPlaceOwner().getId();
-                    dbM.addorReplaceTrace(id, Time);
-                }
-
+                CheckandWriteCalendar();
             }
         });
+    }
+
+    public void CheckandWriteCalendar(){
+        if (ContextCompat.checkSelfPermission(EventDetails.this,
+                Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(EventDetails.this,  new String[] {  Manifest.permission.WRITE_CALENDAR},
+                    GiveMeEventUtils.WRITE_CALENDAR_CODE);
+
+        }else{
+            GiveMeEventUtils.addEventToCalendar(EventDetails.this, event);
+            Date evdate = GiveMeEventUtils.createDateFromString(event.getStartTime(), "yyyy-MM-dd'T'HH:mm:ssZ");
+            SimpleDateFormat myFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+
+            String Time = GiveMeEventUtils.createStringfromDate(evdate, "HH:mm");
+            if(event.getPlace()!=null) {
+                String id = event.getPlace().getId();
+                dbM.addorReplaceTrace(id, Time);
+            }else{
+                String id = event.getPlaceOwner().getId();
+                dbM.addorReplaceTrace(id, Time);
+            }
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case GiveMeEventUtils.WRITE_CALENDAR_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    CheckandWriteCalendar();
+                } else {
+                    GiveMeEventUtils.showToast(EventDetails.this, getString(R.string.permission_denied));
+                }
+                break;
+        }
     }
 
 }

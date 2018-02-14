@@ -113,13 +113,13 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         }
          dbM = new GiveMeEventDbManager(ctx);
         if(event.getPlace()!=null){
-            if((dbM.existFavPlace(new Long(event.getPlace().getId())) )){
+            if((dbM.existFavPlace(event.getPlace().getId()) )){
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
             }else{
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
             }
         }else{
-            if( (dbM.existFavPlace(new Long(event.getPlaceOwner().getId())))){
+            if( (dbM.existFavPlace(event.getPlaceOwner().getId()))){
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_on));
             }else{
                 holder.evFavorite.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_fav_off));
@@ -132,9 +132,9 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
                 boolean favorite;
                 if(event.getPlace()!=null){
-                    favorite = dbM.existFavPlace(new Long(event.getPlace().getId()));
+                    favorite = dbM.existFavPlace(event.getPlace().getId());
                 }else{
-                    favorite = dbM.existFavPlace(new Long(event.getPlaceOwner().getId()));
+                    favorite = dbM.existFavPlace(event.getPlaceOwner().getId());
                 }
 
                 if (!favorite) {
