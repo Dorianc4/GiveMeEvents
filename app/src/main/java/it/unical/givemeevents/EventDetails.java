@@ -80,7 +80,7 @@ public class EventDetails extends AppCompatActivity {
         btn_Favorite = (ImageButton) findViewById(R.id.btn_plFavorite);
         btn_Map = (ImageButton) findViewById(R.id.btn_plMap);
         btn_Calendar = (ImageButton) findViewById(R.id.btn_AddCalendar);
-
+        btn_buyTicket = (ImageButton) findViewById(R.id.btn_ticket);
         event = getIntent().getParcelableExtra("Event");
         int i = 0;
 
