@@ -113,7 +113,9 @@ public class FavoritesAdapter extends BaseAdapter {
 //        viewHolder.category.setText(event.getCategory());
 //        Log.d("PICURL", event.getPicture().getData().getUrl());
         if (place.getPicture() != null && !place.getPicture().isEmpty()) {
-            Picasso.with(ctx).load(place.getPicture()).into(viewHolder.cover);
+            Picasso.with(ctx).load(place.getPicture()).placeholder(R.drawable.ic_location).into(viewHolder.cover);
+        } else {
+            Picasso.with(ctx).load( R.drawable.ic_location).into(viewHolder.cover);
         }
 
         return view;
