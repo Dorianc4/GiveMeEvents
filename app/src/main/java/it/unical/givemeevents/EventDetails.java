@@ -114,7 +114,7 @@ public class EventDetails extends AppCompatActivity {
         String Category = event.getCategory();
 
 
-        txt_Category.setText(Category);
+
         txt_Place.setText(Place);
         txt_Time.setText(Time);
         txt_Name.setText(Name);
