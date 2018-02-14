@@ -129,7 +129,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView8"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5"
                 app:srcCompat="@drawable/ic_description" />
 
             <TextView
@@ -181,20 +181,20 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView5"
                 app:layout_constraintTop_toBottomOf="@+id/txt_EvAddress" />
 
-            <TextView
-                android:id="@+id/txt_EvTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="231dp"
-                android:layout_marginStart="8dp"
-                android:fontFamily="sans-serif-condensed"
-                android:text="Event Time"
-                android:textColor="@android:color/background_light"
-                android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView5"
-                app:layout_constraintTop_toBottomOf="@+id/txt_EvDate" />
+    <TextView
+        android:id="@+id/txt_EvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="231dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Event Time"
+        android:textColor="@android:color/background_light"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageView5"
+        app:layout_constraintTop_toBottomOf="@+id/txt_EvDate" />
 
             <TextView
                 android:id="@+id/txt_EvDesc"
@@ -202,7 +202,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-condensed"
                 android:maxLines="20"
                 android:text="Event Description"
@@ -211,32 +211,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imageView7"
-                app:layout_constraintTop_toBottomOf="@+id/txt_EvCategory" />
-
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="33dp"
-                android:layout_height="39dp"
-                android:layout_marginEnd="309dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView5"
-                app:srcCompat="@drawable/ic_category" />
-
-            <TextView
-                android:id="@+id/txt_EvCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="15dp"
-                android:fontFamily="sans-serif-condensed"
-                android:text="Category"
-                android:textColor="@android:color/background_light"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView8"
                 app:layout_constraintTop_toBottomOf="@+id/txt_EvTime" />
 
             <android.support.v7.widget.Toolbar
@@ -250,20 +224,39 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/btn_AddCalendar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@android:color/transparent"
-                app:layout_constraintBottom_toBottomOf="@+id/img_EvImage"
-                app:layout_constraintEnd_toStartOf="@+id/btn_plMap"
-                app:layout_constraintHorizontal_bias="0.086"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_EvImage"
-                app:srcCompat="@drawable/ic_add_calendar" />
-        </android.support.constraint.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/btn_AddCalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/img_EvImage"
+        app:layout_constraintEnd_toStartOf="@+id/btn_plMap"
+        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_EvImage"
+        app:srcCompat="@drawable/ic_add_calendar" />
+
+    <ImageButton
+        android:id="@+id/btn_ticket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/img_EvImage"
+        app:layout_constraintEnd_toStartOf="@+id/btn_plMap"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toEndOf="@+id/btn_AddCalendar"
+        app:layout_constraintTop_toBottomOf="@+id/img_EvImage"
+        app:layout_constraintVertical_bias="0.4"
+        app:srcCompat="@drawable/ic_ticket_buy" />
+
+</android.support.constraint.ConstraintLayout>
+
+
     </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>
