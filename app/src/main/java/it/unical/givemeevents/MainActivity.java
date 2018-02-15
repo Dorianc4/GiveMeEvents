@@ -279,12 +279,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (graph.getLongitud() == 0 && graph.getLatitud() == 0) {
                 graph.setLongitud(gsd.getLongitud());
                 graph.setLatitud(gsd.getLatitud());
-                searchName = "your current location.";
+                searchName = getString(R.string.search_current_location_msg);
                 gsd.setName(searchName);
             }
-
-            gsd = graph;
             searchName = gsd.getName();
+            gsd = graph;
             perform();
         }
     }
@@ -729,15 +728,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myAdapter.removeAllEvents();
                     myAdapter.addEvents(facebookEvents);
                     txt_Status.setText(getString(R.string.suggest_label));
-                    progressBarFind.setVisibility(View.GONE);
-                    txt_Status.setVisibility(View.VISIBLE);
                     if (myAdapter.getItemCount() > 1)
                         evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
                     if (myAdapter.getItemCount() > 1)
                         evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
                     else
                         evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
+                }else{
+                    GiveMeEventUtils.showMessage(MainActivity.this, null, getString(R.string.no_suggest_msg));
                 }
+                progressBarFind.setVisibility(View.GONE);
+                txt_Status.setVisibility(View.VISIBLE);
             }
         };
         a.execute();

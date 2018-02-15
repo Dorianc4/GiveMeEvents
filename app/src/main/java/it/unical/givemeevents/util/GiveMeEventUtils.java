@@ -210,4 +210,27 @@ public class GiveMeEventUtils {
             }
         });
     }
+
+    public static AlertDialog showMessage(Context ctx, String title, String msg) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        if (title != null && !title.equals("")) {
+            builder.setTitle(title);
+        } else {
+            builder.setTitle(R.string.app_name);
+        }
+        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setMessage(msg);
+        builder.setIcon(R.mipmap.ic_launcher);
+        AlertDialog alert = builder.create();
+
+        alert.show();
+        return alert;
+
+    }
 }
