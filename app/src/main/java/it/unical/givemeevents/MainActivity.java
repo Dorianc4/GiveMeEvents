@@ -129,9 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ////////////////////FACEBOOK LOGIN///////////////////////
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
-//        loginButton.setReadPermissions(Arrays.asList("email"));
         LoginManager.getInstance().registerCallback(callbackManager, new CustomLoginFacebookCallback(this));
-//        LoginManager.getInstance().logInWithReadPermissions(this, null);
         graphManager = ((GiveMeEventApplication) getApplication()).getFacebookGraphManager();
         ///////////////////////////////////////////////////////////
 
@@ -175,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 Intent detIntent = new Intent(MainActivity.this, EventDetails.class);
                 detIntent.putExtra("Event", event);
-//                detIntent.putExtra("arraySize", event.getPlaceOwner().getCategoryList().length);
                 ActivityCompat.startActivityForResult(MainActivity.this, detIntent, 0, null);
             }
         });
@@ -196,12 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
         }
-
         dbManager = new GiveMeEventDbManager(this);
-//        dbManager.addorReplaceFavPlace(new EventPlace("213213", "Unical", null, ""));
-//        List<EventPlace> a = dbManager.getAllFavPlaces();
-//        a.moveToNext();
-//        Log.d("FROMDATABASE", a + "");
 
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
         evQuant = (TextView) findViewById(R.id.txt_evQuantity);
@@ -256,7 +248,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 gsd.setLongitud(location.getLongitude());
                 gsd.setOnMyFavorites(false);
                 perform();
-//                perform(loc.getLatitude(), loc.getLongitude());
             } else if (lastLoc != null && !lastLoc.isEmpty()) {
                 //perform con estas coordenadas
                 String[] aux = lastLoc.split(",");
@@ -264,10 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 gsd.setLongitud(Double.parseDouble(aux[1]));
                 gsd.setOnMyFavorites(false);
                 perform();
-//                perform(, );
             } else {
-//                locManager.isLocationEnabled()
-//                locManager.getLocation(locListener);
                 gsd.setOnMyFavorites(false);
                 requestLocation();
             }
@@ -314,39 +302,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } else {
                         ids = graphManager.findPlacesId(gsd);
                     }
-//                //adapter = new EventAdapter(MainActivity.this, new ArrayList<FacebookEvent>());
-//                    myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), MainActivity.this);
                     Log.d("CANTIDAD", ids.size() + "");
                     try {
-//                        for (int i = 0; i < a.size(); i++) {
-//                            if(this.isCancelled()){
-//                                break;
-//                            }
-//                            List<FacebookEvent> b = graphManager.findEventsOfPlace(a.get(i), sd);
-//                            Log.d("PLACE", a.get(i));
-//                            publishProgress(b);
-//                        }
-
                         if (ids.size() <= 50) {
                             List<FacebookEvent> b = graphManager.findEvents(ids, gsd);
-//                            Log.d("PLACE", a.get(i));
                             publishProgress(b);
                         } else {
                             int count = 0;
                             for (int i = 0; i < (ids.size() - 50); i += 50) {
-//                                String idsTemp = ids.subList(i, i + 50).toString();
                                 List<FacebookEvent> b = graphManager.findEvents(ids.subList(i, i + 50), gsd);
                                 publishProgress(b);
                             }
                             if (ids.size() % 50 != 0) {
-//                    Log.d("QUANTITY", ids.subList(50*(idsSize/50), idsSize).size()+"");
                                 String idsTemp = ids.subList(50 * (ids.size() / 50), ids.size()).toString();
                                 List<FacebookEvent> b = graphManager.findEvents(ids.subList(50 * (ids.size() / 50), ids.size()), gsd);
                                 publishProgress(b);
                             }
                         }
-//                    List<FacebookEvent> b = graphManager.findEventsOfPlace("169530886826952");
-//                    publishProgress(b);
                         return null;
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -369,21 +341,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
                 else
                     evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
-//                String text = a.size()+"\n";
-
-//                for (FacebookEvent e: a) {
-//                    text+=(e.getName()+"----"+e.getPlaceOwner().getName()+"---"+e.getStartTime()+"\n///////////////\n");
-//                    Log.d("EVENTID", e.getId());
-//                }
-////                ((TextView)findViewById(R.id.textView)).setText(text);
-//                Log.d("EXECTIME",(new Date().getTime()/1000)+"");
             }
 
             @Override
             protected void onPostExecute(List<FacebookEvent> events) {
-//                super.onPostExecute(events);
-//                adapter.setEvents(events);
-//                adapter.notifyDataSetChanged();
                 progressBarFind.setVisibility(View.GONE);
                 int distance = gsd.getDistance();
                 String meas = "m";
@@ -423,18 +384,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        if(FacebookGraphManager.isLogged()) {
+            int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        } else
-        if (id == R.id.action_location) {
-            requestLocation();
-        } else if (id == R.id.action_search) {
-            openFilterSearch();
-        } else if (id == R.id.action_suggest) {
-            suggestEvents();
+            if (id == R.id.action_location) {
+                requestLocation();
+            } else if (id == R.id.action_search) {
+                openFilterSearch();
+            } else if (id == R.id.action_suggest) {
+                suggestEvents();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -446,22 +405,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-
-//        } else
         if (id == R.id.action_search) {
             openFilterSearch();
         } else if (id == R.id.nav_favorites) {
             showFavorites(null);
-        }
-// else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-
-//        }
-        else if (id == R.id.nav_logout) {
+        }else if (id == R.id.nav_logout) {
             if (FacebookGraphManager.isLogged()) {
                 GiveMeEventUtils.showYesNoDialog(this, getString(R.string.app_name), getString(R.string.fb_logout_msg),
                         new DialogInterface.OnClickListener() {
@@ -540,6 +488,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             loginButton.setVisibility(View.GONE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
             navigationView.getMenu().findItem(R.id.action_search).setEnabled(true);
+            navigationView.getMenu().findItem(R.id.nav_favorites).setEnabled(true);
             findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
             graphManager.findUserBasicInfo(new GraphRequest.GraphJSONObjectCallback() {
                 @Override
@@ -564,11 +513,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             loginButton.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
             navigationView.getMenu().findItem(R.id.action_search).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.nav_favorites).setEnabled(false);
             myAdapter.removeAllEvents();
             Picasso.with(MainActivity.this).load(R.drawable.ic_def_account_image)
                     .into(imageViewAccount);
             textViewNameAccount.setText(getString(R.string.app_name));
             findViewById(R.id.bottomBar).setVisibility(View.GONE);
+            progressBarFind.setVisibility(View.GONE);
+            txt_Status.setVisibility(View.GONE);
         }
 
     }

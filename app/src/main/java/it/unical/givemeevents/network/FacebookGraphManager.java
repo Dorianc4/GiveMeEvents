@@ -75,36 +75,8 @@ public class FacebookGraphManager {
         return ctx.getString(R.string.facebook_app_id);
     }
 
-//    private List<String> findPlacesIdPaging(Map<String, String> params) throws IOException, JSONException {
-//        Call<String> call = graphService.search(params);
-//        Response<String> resp = call.execute();
-//        List<String> ids = new LinkedList<String>();
-//        if (resp.isSuccessful()) {
-//            JSONObject json = new JSONObject(resp.body());
-//            if (json.has("data")) {
-//                JSONArray array = json.getJSONArray("data");
-//                for (int i = 0; i < array.length(); i++) {
-//                    ids.add(((JSONObject) array.get(i)).getString("id"));
-//                }
-//                if (json.has("paging")) {
-//                    JSONObject pag = json.getJSONObject("paging");
-//                    if (pag.has("cursors")) {
-//                        JSONObject cursors = pag.getJSONObject("cursors");
-//                        if (cursors.has("after")) {
-//                            params.put("after", cursors.getString("after"));
-//                            ids.addAll(findPlacesIdPaging(params));
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return ids;
-//    }
 
     public List<String> findPlacesId(GraphSearchData searchData) {
-//        if (searchData.getAuthToken() == null || searchData.getAuthToken().isEmpty()) {
-//            throw new InvalidParameterException("The Auth Token must be specified");
-//        }
         List<String> results = new LinkedList<>();
         try {
             results = findPlacesIdPaging(searchData);
@@ -123,7 +95,7 @@ public class FacebookGraphManager {
         Bundle params = new Bundle();
         params.putString("center", searchData.getCenter());
         params.putString("distance", searchData.getDistance() + "");
-        params.putString("limit", "200");//REVISAR ESTO PARA VER COMO SE PUEDE IMPLEMENTAR UN PAGINADO
+        params.putString("limit", "200");
         params.putString("q", (searchData.getQuery() != null) ? searchData.getQuery() : "");
         params.putString("fields", ctx.getString(R.string.fb_graph_field_id));
         params.putString("type", ctx.getString(R.string.fb_graph_type_place));
@@ -144,7 +116,6 @@ public class FacebookGraphManager {
                     JSONArray array = json.getJSONArray("data");
                     for (int i = 0; i < array.length(); i++) {
                         ids.add(((JSONObject) array.get(i)).getString("id"));
-//                        Log.d("CATEGORY", ((JSONObject) array.get(i)).getString("category"));
                     }
                 }
             } else {
@@ -158,7 +129,6 @@ public class FacebookGraphManager {
 
     public List<FacebookEvent> findEvents(List<String> ids, GraphSearchData searchData) throws JSONException {
 
-//        JSONObject data = new JSONObject();
         List<FacebookEvent> events = new LinkedList<FacebookEvent>();
         if (ids != null && ids.size() > 0) {
             int idsSize = ids.size();
@@ -172,26 +142,18 @@ public class FacebookGraphManager {
                 String idsTemp = Arrays.toString(ids.toArray());
                 params.putString(ctx.getString(R.string.fb_graph_field_ids), idsTemp.substring(1, idsTemp.length() - 1));
                 params.putString(ctx.getString(R.string.fb_graph_field_fields), fields);
-//                addJsonWithEvents(data,findEventsAux(params));
                 events.addAll(findEventsAux(params));
             } else {
                 int count = 0;
                 params.putString(ctx.getString(R.string.fb_graph_field_fields), fields);
-//                JSONObject jsonMix = new JSONObject();
                 for (int i = 0; i < (idsSize - 50); i += 50) {
-//                    Log.d("QUANTITY", ids.subList(i, i+50).size()+"");
                     String idsTemp = ids.subList(i, i + 50).toString();
                     params.putString(ctx.getString(R.string.fb_graph_field_ids), idsTemp.substring(1, idsTemp.length() - 1));
-//                    JSONObject jsonResp = findEventsAux(params);
-//                    addJsonWithEvents(data, jsonResp);
                     events.addAll(findEventsAux(params));
                 }
                 if (idsSize % 50 != 0) {
-//                    Log.d("QUANTITY", ids.subList(50*(idsSize/50), idsSize).size()+"");
                     String idsTemp = ids.subList(50 * (idsSize / 50), idsSize).toString();
                     params.putString(ctx.getString(R.string.fb_graph_field_ids), idsTemp.substring(1, idsTemp.length() - 1));
-//                    JSONObject jsonResp = findEventsAux(params);
-//                    addJsonWithEvents(data, jsonResp);
                     events.addAll(findEventsAux(params));
                 }
             }
@@ -213,7 +175,6 @@ public class FacebookGraphManager {
         /*///////////////////////REQUEST EXECUTION///////////////////////*/
         GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(), "/", null);
         request.setParameters(params);
-//        JSONObject jsonMix = new JSONObject();
         List<FacebookEvent> events = new LinkedList<FacebookEvent>();
         do {
             GraphResponse resp = request.executeAndWait();
@@ -223,7 +184,6 @@ public class FacebookGraphManager {
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
                     Gson gson = new Gson();
-//                    jsonMix.put(key, jsonResp.get(key));
                     JSONObject aux = jsonResp.getJSONObject(key);
                     if (aux.has(ctx.getString(R.string.fb_graph_field_events))) {
                         FacebookPlace eventPlace = gson.fromJson(aux.toString(), FacebookPlace.class);
