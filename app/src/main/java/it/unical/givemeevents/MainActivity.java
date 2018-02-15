@@ -277,89 +277,93 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void perform() {
-        GiveMeEventUtils.setPreference(this, getString(R.string.last_location), gsd.getLatitud() + "," + gsd.getLongitud());
-        if (asyncFindEvents != null && asyncFindEvents.getStatus() == AsyncTask.Status.RUNNING) {
-            asyncFindEvents.cancel(true);
-        }
-        //adapter.removeAllEvents();
-        myAdapter.removeAllEvents();
-        asyncFindEvents = new AsyncTask<Void, List<FacebookEvent>, List<FacebookEvent>>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressBarFind.setVisibility(View.VISIBLE);
-                txt_Status.setVisibility(View.GONE);
+        if (GiveMeEventUtils.isOnline(this)){
+            GiveMeEventUtils.setPreference(this, getString(R.string.last_location), gsd.getLatitud() + "," + gsd.getLongitud());
+            if (asyncFindEvents != null && asyncFindEvents.getStatus() == AsyncTask.Status.RUNNING) {
+                asyncFindEvents.cancel(true);
             }
+            //adapter.removeAllEvents();
+            myAdapter.removeAllEvents();
+            asyncFindEvents = new AsyncTask<Void, List<FacebookEvent>, List<FacebookEvent>>() {
 
-            @Override
-            protected List<FacebookEvent> doInBackground(Void[] objects) {
-                if (!this.isCancelled()) {
-                    List<String> ids = new ArrayList<>();
-                    if (gsd.isOnMyFavorites()) {
-                        ids = getFavoritesPlacesId();
-                        searchName = getString(R.string.search_favorites_msg);
-                    } else {
-                        ids = graphManager.findPlacesId(gsd);
-                    }
-                    Log.d("CANTIDAD", ids.size() + "");
-                    try {
-                        if (ids.size() <= 50) {
-                            List<FacebookEvent> b = graphManager.findEvents(ids, gsd);
-                            publishProgress(b);
-                        } else {
-                            int count = 0;
-                            for (int i = 0; i < (ids.size() - 50); i += 50) {
-                                List<FacebookEvent> b = graphManager.findEvents(ids.subList(i, i + 50), gsd);
-                                publishProgress(b);
-                            }
-                            if (ids.size() % 50 != 0) {
-                                String idsTemp = ids.subList(50 * (ids.size() / 50), ids.size()).toString();
-                                List<FacebookEvent> b = graphManager.findEvents(ids.subList(50 * (ids.size() / 50), ids.size()), gsd);
-                                publishProgress(b);
-                            }
-                        }
-                        return null;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return new ArrayList<>();
-            }
-
-            @Override
-            protected void onProgressUpdate(List<FacebookEvent>[] values) {
-                super.onProgressUpdate(values);
-                List<FacebookEvent> a = values[0];
-                Log.d("CANTIDADFULL", myAdapter.getEvents().size() + "");
-                //adapter.addEvents(a);
-                myAdapter.addEvents(a);
-
-                if (myAdapter.getItemCount() > 1)
-                    evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
-                if (myAdapter.getItemCount() > 1)
-                    evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
-                else
-                    evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
-            }
-
-            @Override
-            protected void onPostExecute(List<FacebookEvent> events) {
-                progressBarFind.setVisibility(View.GONE);
-                int distance = gsd.getDistance();
-                String meas = "m";
-
-                String StatusMessage = "Displaying events finded " + distance + meas + " around " + searchName + " ";
-
-                if (myAdapter.getEvents().size() > 0) {
-                    txt_Status.setText(StatusMessage);
-                    txt_Status.setSelected(true);
-                    txt_Status.setVisibility(View.VISIBLE);
-                } else {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    progressBarFind.setVisibility(View.VISIBLE);
                     txt_Status.setVisibility(View.GONE);
                 }
-            }
-        }.execute();
+
+                @Override
+                protected List<FacebookEvent> doInBackground(Void[] objects) {
+                    if (!this.isCancelled()) {
+                        List<String> ids = new ArrayList<>();
+                        if (gsd.isOnMyFavorites()) {
+                            ids = getFavoritesPlacesId();
+                            searchName = getString(R.string.search_favorites_msg);
+                        } else {
+                            ids = graphManager.findPlacesId(gsd);
+                        }
+                        Log.d("CANTIDAD", ids.size() + "");
+                        try {
+                            if (ids.size() <= 50) {
+                                List<FacebookEvent> b = graphManager.findEvents(ids, gsd);
+                                publishProgress(b);
+                            } else {
+                                int count = 0;
+                                for (int i = 0; i < (ids.size() - 50); i += 50) {
+                                    List<FacebookEvent> b = graphManager.findEvents(ids.subList(i, i + 50), gsd);
+                                    publishProgress(b);
+                                }
+                                if (ids.size() % 50 != 0) {
+                                    String idsTemp = ids.subList(50 * (ids.size() / 50), ids.size()).toString();
+                                    List<FacebookEvent> b = graphManager.findEvents(ids.subList(50 * (ids.size() / 50), ids.size()), gsd);
+                                    publishProgress(b);
+                                }
+                            }
+                            return null;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return new ArrayList<>();
+                }
+
+                @Override
+                protected void onProgressUpdate(List<FacebookEvent>[] values) {
+                    super.onProgressUpdate(values);
+                    List<FacebookEvent> a = values[0];
+                    Log.d("CANTIDADFULL", myAdapter.getEvents().size() + "");
+                    //adapter.addEvents(a);
+                    myAdapter.addEvents(a);
+
+                    if (myAdapter.getItemCount() > 1)
+                        evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
+                    if (myAdapter.getItemCount() > 1)
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
+                    else
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
+                }
+
+                @Override
+                protected void onPostExecute(List<FacebookEvent> events) {
+                    progressBarFind.setVisibility(View.GONE);
+                    int distance = gsd.getDistance();
+                    String meas = "m";
+
+                    String StatusMessage = "Displaying events finded " + distance + meas + " around " + searchName + " ";
+
+                    if (myAdapter.getEvents().size() > 0) {
+                        txt_Status.setText(StatusMessage);
+                        txt_Status.setSelected(true);
+                        txt_Status.setVisibility(View.VISIBLE);
+                    } else {
+                        txt_Status.setVisibility(View.GONE);
+                    }
+                }
+            }.execute();
+        }else{
+            GiveMeEventUtils.showMessage(this, null, getString(R.string.no_internet_msg));
+        }
     }
 
     @Override
@@ -384,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        if(FacebookGraphManager.isLogged()) {
+        if (FacebookGraphManager.isLogged()) {
             int id = item.getItemId();
 
             if (id == R.id.action_location) {
@@ -409,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             openFilterSearch();
         } else if (id == R.id.nav_favorites) {
             showFavorites(null);
-        }else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
             if (FacebookGraphManager.isLogged()) {
                 GiveMeEventUtils.showYesNoDialog(this, getString(R.string.app_name), getString(R.string.fb_logout_msg),
                         new DialogInterface.OnClickListener() {
@@ -686,7 +690,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
                     else
                         evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
-                }else{
+                } else {
                     GiveMeEventUtils.showMessage(MainActivity.this, null, getString(R.string.no_suggest_msg));
                 }
                 progressBarFind.setVisibility(View.GONE);

@@ -78,6 +78,7 @@
     <string name="prefs_name">it.unical.givemeevents.Shared_Preferences</string>
     <string name="last_location">lastLocation</string>
     <string name="search_current_location_msg">your current location.</string>
+    <string name="no_internet_msg">You don\'t have internet connection, please connect your device and try again</string>
     <string name="search_favorites_msg">your favorites places.</string>
     <string name="my_location_msg">My location</string>
     <string name="search_msg">Filter Search</string>
