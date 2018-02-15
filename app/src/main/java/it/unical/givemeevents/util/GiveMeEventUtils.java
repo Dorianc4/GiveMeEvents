@@ -151,8 +151,7 @@ public class GiveMeEventUtils {
     public static void launchBrowser(Context ctx, String url) {
         if (ctx != null && !url.isEmpty()) {
             Uri uri = Uri.parse(url);
-            Intent intent = new Intent();
-            intent.setData(uri);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             ctx.startActivity(intent);
         }

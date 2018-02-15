@@ -23,7 +23,6 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif-condensed"
             android:paddingLeft="8dp"
-            android:text="Searching Events"
             android:textColor="@android:color/background_light"
             android:textSize="18sp" />
 

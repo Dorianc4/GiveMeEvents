@@ -198,12 +198,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         dbManager = new GiveMeEventDbManager(this);
-//        try {
-//            suggestEvents();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
 //        dbManager.addorReplaceFavPlace(new EventPlace("213213", "Unical", null, ""));
 //        List<EventPlace> a = dbManager.getAllFavPlaces();
 //        a.moveToNext();
@@ -393,12 +387,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                adapter.notifyDataSetChanged();
                 progressBarFind.setVisibility(View.GONE);
                 int distance = gsd.getDistance();
-                String meas = "";
-                if (distance == 500) {
-                    meas = "m";
-                } else {
-                    meas = "Km";
-                }
+                String meas = "m";
+
                 String StatusMessage = "Displaying events finded " + distance + meas + " around " + searchName + " ";
 
                 if (myAdapter.getEvents().size() > 0) {
@@ -444,6 +434,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestLocation();
         } else if (id == R.id.action_search) {
             openFilterSearch();
+        } else if (id == R.id.action_suggest) {
+            suggestEvents();
         }
 
         return super.onOptionsItemSelected(item);
@@ -669,8 +661,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }.execute();
     }
 
-    private void suggestEvents() throws JSONException {
+    private void suggestEvents() {
         AsyncTask<Void, Void, List<FacebookEvent>> a = new AsyncTask<Void, Void, List<FacebookEvent>>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressBarFind.setVisibility(View.VISIBLE);
+                txt_Status.setVisibility(View.GONE);
+            }
+
             @Override
             protected List<FacebookEvent> doInBackground(Void... voids) {
                 List<String> idPlaces = dbManager.getPlacesMostVisited();
@@ -703,26 +702,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Date aux = GiveMeEventUtils.createDateFromString(startTime, "yyyy-MM-dd'T'HH:mm:ssZ");
                             startTime = GiveMeEventUtils.createStringfromDate(aux, "HH:mm");
                             if (!testStartTime(time, startTime)) {
-                                filter.remove(event);
+                                ////////////////PARA MANTENER 5 ELEMENTOS////////////////
+                                if (filter.size() > 5) {
+                                    filter.remove(event);
+                                }
                             }
                         }
                         filter2 = new ArrayList<>(filter);
                         for (int i = 0; i < filter.size(); i++) {
                             FacebookEvent event = filter.get(i);
                             if (!belongToCategories(catPopular, event.getPlaceOwner().getCategoryList())) {
-                                filter2.remove(event);
+                                ////////////////PARA MANTENER 5 ELEMENTOS////////////////
+                                if (filter2.size() > 5) {
+                                    filter2.remove(event);
+                                }
                             }
                         }
                     }
                 }
-                return null;
+                return filter2;
             }
 
             @Override
             protected void onPostExecute(List<FacebookEvent> facebookEvents) {
-                if (facebookEvents != null) {
+                if (facebookEvents != null && facebookEvents.size() > 0) {
                     myAdapter.removeAllEvents();
                     myAdapter.addEvents(facebookEvents);
+                    txt_Status.setText(getString(R.string.suggest_label));
+                    progressBarFind.setVisibility(View.GONE);
+                    txt_Status.setVisibility(View.VISIBLE);
+                    if (myAdapter.getItemCount() > 1)
+                        evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
+                    if (myAdapter.getItemCount() > 1)
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
+                    else
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
                 }
             }
         };
