@@ -90,10 +90,34 @@ public class FacebookPlace implements Parcelable, Serializable{
         this.name = in.readString();
         this.category = in.readString();
         this.picture = in.readParcelable(Picture.class.getClassLoader());
-        this.emails = in.createStringArray();
-        this.categoryList = in.createTypedArray(Category.CREATOR);
+//        this.emails = in.createStringArray();
+//        int size = in.readInt();
+//        if(size==0){
+//            this.categoryList = new Category[0];
+//        }else {
+//            this.categoryList = new Category[size];
+//            in.readTypedArray(this.categoryList, Category.CREATOR);
+            this.categoryList = (Category[]) in.readSerializable();
+//        }
         this.location = in.readParcelable(Location.class.getClassLoader());
-        this.cover = in.readParcelable(CoverPhoto.class.getClassLoader());
+//        this.cover = in.readParcelable(CoverPhoto.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(category);
+        dest.writeParcelable(picture,flags);
+//        dest.writeArray(emails);
+//        if(categoryList==null || categoryList.length==0){
+//            dest.writeInt(0);
+//        }else{
+//            dest.writeInt(categoryList.length);
+            dest.writeSerializable(categoryList);
+//        }
+        dest.writeParcelable(location, flags);
+//        dest.writeParcelable(cover, flags);
     }
 
     public static  final  Creator<FacebookPlace> CREATOR = new ClassLoaderCreator<FacebookPlace>() {
@@ -120,15 +144,4 @@ public class FacebookPlace implements Parcelable, Serializable{
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(category);
-        dest.writeParcelable(picture,flags);
-        dest.writeArray(emails);
-        dest.writeTypedArray(categoryList, flags);
-        dest.writeParcelable(location, flags);
-        dest.writeParcelable(cover, flags);
-    }
 }

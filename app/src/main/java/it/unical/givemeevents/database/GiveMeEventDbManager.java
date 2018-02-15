@@ -275,7 +275,7 @@ public class GiveMeEventDbManager {
         }
         int fnal = 0;
         //////DAY COUNT///////
-        Cursor cursor = db.rawQuery("SELECT count(start_time) as day FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"07:00", "13:00"});
+        Cursor cursor = db.rawQuery("SELECT count(start_time) as day FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"07:00", "12:59"});
         int day = 0;
         if (cursor.moveToNext()) {
             day = cursor.getInt(0);
@@ -283,7 +283,7 @@ public class GiveMeEventDbManager {
         cursor.close();
 
         //////AFTERNOON///////
-        Cursor cursor1 = db.rawQuery("SELECT count(start_time) as afternoon FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"13:00", "21:00"});
+        Cursor cursor1 = db.rawQuery("SELECT count(start_time) as afternoon FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"13:00", "20:59"});
         int after = 0;
         if (cursor1.moveToNext()) {
             after = cursor1.getInt(0);
@@ -291,7 +291,7 @@ public class GiveMeEventDbManager {
         cursor1.close();
 
         //////AFTERNOON///////
-        Cursor cursor2 = db.rawQuery("SELECT count(start_time) as night FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"21:00", "07:00"});
+        Cursor cursor2 = db.rawQuery("SELECT count(start_time) as night FROM " + TraceDbContract.TraceEntry.TABLE_NAME + " WHERE start_time >= ? AND start_time <= ?", new String[]{"21:00", "06:59"});
         int night = 0;
         if (cursor2.moveToNext()) {
             night = cursor2.getInt(0);

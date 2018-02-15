@@ -3,17 +3,16 @@ package it.unical.givemeevents.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 /**
  * Created by Manuel on 9/12/2017.
  */
 
-public class Category implements Parcelable{
+public class Category implements Parcelable, Serializable{
 
     private String id;
     private String name;
-
-    public Category() {
-    }
 
     public Category(String id, String name) {
         this.id = id;
@@ -25,12 +24,12 @@ public class Category implements Parcelable{
         this.name = in.readString();
     }
 
-    public static  final  Creator<Category> CREATOR = new ClassLoaderCreator<Category>() {
+    public static final Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
 
-        @Override
-        public Category createFromParcel(Parcel source, ClassLoader loader) {
-            return new Category(source);
-        }
+//        @Override
+//        public Category createFromParcel(Parcel source, ClassLoader loader) {
+//            return new Category(source);
+//        }
 
         @Override
         public Category createFromParcel(Parcel source) {

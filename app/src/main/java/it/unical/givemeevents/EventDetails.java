@@ -81,6 +81,7 @@ public class EventDetails extends AppCompatActivity {
         btn_Map = (ImageButton) findViewById(R.id.btn_plMap);
         btn_Calendar = (ImageButton) findViewById(R.id.btn_AddCalendar);
         btn_buyTicket = (ImageButton) findViewById(R.id.btn_ticket);
+//        int size = getIntent().getIntExtra("arraySize", 0);
         event = getIntent().getParcelableExtra("Event");
         //int i = 0;
 

@@ -56,6 +56,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -64,6 +65,7 @@ import it.unical.givemeevents.database.GiveMeEventDbManager;
 import it.unical.givemeevents.gui.FavoritesDialog;
 import it.unical.givemeevents.gui.FilterSearchDialog;
 import it.unical.givemeevents.gui.PicassoCircleTranformation;
+import it.unical.givemeevents.model.Category;
 import it.unical.givemeevents.model.EventPlace;
 import it.unical.givemeevents.model.FacebookEvent;
 import it.unical.givemeevents.model.GraphSearchData;
@@ -173,7 +175,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 Intent detIntent = new Intent(MainActivity.this, EventDetails.class);
                 detIntent.putExtra("Event", event);
-                startActivity(detIntent);
+//                detIntent.putExtra("arraySize", event.getPlaceOwner().getCategoryList().length);
+                ActivityCompat.startActivityForResult(MainActivity.this, detIntent, 0, null);
             }
         });
 
@@ -194,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             validateAndPerformFind();
         }
 
-//        dbManager = new GiveMeEventDbManager(this);
+        dbManager = new GiveMeEventDbManager(this);
 //        try {
 //            suggestEvents();
 //        } catch (JSONException e) {
@@ -667,23 +670,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void suggestEvents() throws JSONException {
+        AsyncTask<Void, Void, List<FacebookEvent>> a = new AsyncTask<Void, Void, List<FacebookEvent>>() {
+            @Override
+            protected List<FacebookEvent> doInBackground(Void... voids) {
+                List<String> idPlaces = dbManager.getPlacesMostVisited();
+                List<String> catPopular = dbManager.getCategoriesMostVisited();
+                int time = dbManager.getTimeMostCommon();
+                List<FacebookEvent> events = new ArrayList<>();
+                List<FacebookEvent> filter = new ArrayList<>();
+                List<FacebookEvent> filter2 = new ArrayList<>();
+                if (idPlaces.size() > 0) {
+                    GraphSearchData graphSearchData = new GraphSearchData();
+                    Calendar today = new GregorianCalendar();
+                    Calendar nextWeek = new GregorianCalendar();
+                    nextWeek.add(Calendar.DATE, 15);
+                    graphSearchData.setSince(today.getTime());
+                    graphSearchData.setUntil(nextWeek.getTime());
+                    try {
+                        events = graphManager.findEvents(idPlaces, graphSearchData);
+                        int a = 0;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (events.size() <= 5) {
+                        return events;
+                    }
+                    if (events.size() > 0) {
+                        filter = new ArrayList<>(events);
+                        for (int i = 0; i < events.size(); i++) {
+                            FacebookEvent event = events.get(i);
+                            String startTime = event.getStartTime();
+                            Date aux = GiveMeEventUtils.createDateFromString(startTime, "yyyy-MM-dd'T'HH:mm:ssZ");
+                            startTime = GiveMeEventUtils.createStringfromDate(aux, "HH:mm");
+                            if (!testStartTime(time, startTime)) {
+                                filter.remove(event);
+                            }
+                        }
+                        filter2 = new ArrayList<>(filter);
+                        for (int i = 0; i < filter.size(); i++) {
+                            FacebookEvent event = filter.get(i);
+                            if (!belongToCategories(catPopular, event.getPlaceOwner().getCategoryList())) {
+                                filter2.remove(event);
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
 
-        List<String> idPlaces = dbManager.getPlacesMostVisited();
-        List<String> dos = dbManager.getCategoriesMostVisited();
-        int tres = dbManager.getTimeMostCommon();
-        List<FacebookEvent> events = new ArrayList<>();
-        if (idPlaces.size() > 0) {
-            GraphSearchData graphSearchData = new GraphSearchData();
-            Calendar today = new GregorianCalendar();
-            Calendar nextWeek = new GregorianCalendar();
-            nextWeek.add(Calendar.DATE, 15);
-            graphSearchData.setSince(today.getTime());
-            graphSearchData.setUntil(nextWeek.getTime());
-            events = graphManager.findEvents(idPlaces, graphSearchData);
-            int a = 0;
+            @Override
+            protected void onPostExecute(List<FacebookEvent> facebookEvents) {
+                if (facebookEvents != null) {
+                    myAdapter.removeAllEvents();
+                    myAdapter.addEvents(facebookEvents);
+                }
+            }
+        };
+        a.execute();
+    }
 
+    private boolean belongToCategories(List<String> popularies, Category[] categories) {
 
+        if (popularies.size() > 0 && categories.length > 0) {
+            for (String catPop : popularies) {
+                for (int i = 0; i < categories.length; i++) {
+                    if (catPop.equals(categories[i].getId())) {
+                        return true;
+                    }
+                }
+            }
         }
 
+        return false;
+    }
+
+    private boolean testStartTime(int time, String startTime) {
+
+        switch (time) {
+            case 1:
+                if (startTime.compareTo("07:00") >= 0 && startTime.compareTo("12:59") <= 0) {
+                    return true;
+                }
+                break;
+            case 2:
+                if (startTime.compareTo("13:00") >= 0 && startTime.compareTo("20:59") <= 0) {
+                    return true;
+                }
+                break;
+            case 3:
+                if (startTime.compareTo("21:00") >= 0 && startTime.compareTo("06:59") <= 0) {
+                    return true;
+                }
+                break;
+            default:
+                return false;
+        }
+
+        return false;
     }
 }

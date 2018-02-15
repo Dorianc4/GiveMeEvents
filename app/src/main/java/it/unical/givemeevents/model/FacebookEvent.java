@@ -13,17 +13,17 @@ import it.unical.givemeevents.EventDetails;
  * Created by Manuel on 9/12/2017.
  */
 
-public class FacebookEvent implements Parcelable{
+public class FacebookEvent implements Parcelable {
 
     private String id;
     private String type;
-    private  Picture picture;
+    private Picture picture;
     @SerializedName("attending_count")
     private int attendingCount;
     @SerializedName("noreply_count")
     private String noReplyCount;
     private String category;
-    private  CoverPhoto cover;
+    private CoverPhoto cover;
     @SerializedName("declined_count")
     private int declinedCount;
     private String description;
@@ -89,7 +89,8 @@ public class FacebookEvent implements Parcelable{
         this.ticketingTermsUri = in.readString();
         this.placeOwner = in.readParcelable(FacebookPlace.class.getClassLoader());
     }
-    public static  final  Creator<FacebookEvent> CREATOR = new ClassLoaderCreator<FacebookEvent>() {
+
+    public static final Creator<FacebookEvent> CREATOR = new ClassLoaderCreator<FacebookEvent>() {
 
         @Override
         public FacebookEvent createFromParcel(Parcel source, ClassLoader loader) {
@@ -128,12 +129,12 @@ public class FacebookEvent implements Parcelable{
         dest.writeInt(interestedCount);
         dest.writeInt(maybeCount);
         dest.writeString(name);
-        dest.writeParcelable(place,flags);
+        dest.writeParcelable(place, flags);
         dest.writeString(startTime);
         dest.writeString(tickedUri);
         dest.writeString(ticketingPrivacyUri);
         dest.writeString(ticketingTermsUri);
-        dest.writeParcelable(placeOwner,flags);
+        dest.writeParcelable(placeOwner, flags);
     }
 
     public String getId() {
@@ -286,5 +287,10 @@ public class FacebookEvent implements Parcelable{
 
     public void setPlaceOwner(FacebookPlace placeOwner) {
         this.placeOwner = placeOwner;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getId().compareTo(((FacebookEvent) obj).getId()) == 0;
     }
 }
