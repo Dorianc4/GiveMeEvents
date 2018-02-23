@@ -12,6 +12,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -32,6 +34,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String TAG = "MainActivity";
     private TextView textView;
     private LoginButton loginButton;
+    private Button loginButtonSupport;
     private CallbackManager callbackManager;
     private List<EventPlace> favoritesPlaces = new ArrayList<>();
     private NavigationView navigationView;
@@ -99,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageButton favoriteButton;
     private String searchName;
     private TextView txt_Status;
+    private boolean requestingUpdates;
 
     @Override
     protected void onResume() {
@@ -129,6 +134,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ////////////////////FACEBOOK LOGIN///////////////////////
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButtonSupport = findViewById(R.id.login_button_support);
+        loginButtonSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (GiveMeEventUtils.isOnline(MainActivity.this)) {
+                    loginButton.performClick();
+                } else {
+                    GiveMeEventUtils.showMessage(MainActivity.this, null, getString(R.string.no_internet_msg));
+                }
+
+            }
+        });
         LoginManager.getInstance().registerCallback(callbackManager, new CustomLoginFacebookCallback(this));
         graphManager = ((GiveMeEventApplication) getApplication()).getFacebookGraphManager();
         ///////////////////////////////////////////////////////////
@@ -144,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 searchName = getString(R.string.search_current_location_msg);
                 perform();
                 locManager.removeUpdates(this);
+                requestingUpdates = false;
             }
 
             @Override
@@ -170,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onItemClick(int position) {
                 FacebookEvent event = myAdapter.getEvents().get(position);
-
                 Intent detIntent = new Intent(MainActivity.this, EventDetails.class);
                 detIntent.putExtra("Event", event);
                 ActivityCompat.startActivityForResult(MainActivity.this, detIntent, 0, null);
@@ -188,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         gsd = new GraphSearchData(500, getResources().getStringArray(R.array.fb_graph_field_categories));
         imageViewAccount = navigationView.getHeaderView(0).findViewById(R.id.imageViewAccountHeader);
         textViewNameAccount = navigationView.getHeaderView(0).findViewById(R.id.textViewNameAccount);
-
+        evQuant = (TextView) findViewById(R.id.txt_evQuantity);
         manageLoginAction();
         if (FacebookGraphManager.isLogged()) {
             validateAndPerformFind();
@@ -196,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dbManager = new GiveMeEventDbManager(this);
 
         /////////////////////////////BOTTOM BAR//////////////////////////////////////
-        evQuant = (TextView) findViewById(R.id.txt_evQuantity);
         ev_ShowMap = (ImageButton) findViewById(R.id.btn_allMap);
         favoriteButton = findViewById(R.id.btn_mFavorites);
 
@@ -277,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void perform() {
-        if (GiveMeEventUtils.isOnline(this)){
+        if (GiveMeEventUtils.isOnline(this)) {
             GiveMeEventUtils.setPreference(this, getString(R.string.last_location), gsd.getLatitud() + "," + gsd.getLongitud());
             if (asyncFindEvents != null && asyncFindEvents.getStatus() == AsyncTask.Status.RUNNING) {
                 asyncFindEvents.cancel(true);
@@ -337,11 +354,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myAdapter.addEvents(a);
 
                     if (myAdapter.getItemCount() > 1)
-                        evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
+                        evQuant.setText(myAdapter.getItemCount() + " " + getString(R.string.search_founded_msg));
                     if (myAdapter.getItemCount() > 1)
-                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + getString(R.string.search_founded_msg));
                     else
-                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + getString(R.string.search_founded_single_msg));
                 }
 
                 @Override
@@ -350,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     int distance = gsd.getDistance();
                     String meas = "m";
 
-                    String StatusMessage = "Displaying events finded " + distance + meas + " around " + searchName + " ";
+                    String StatusMessage = getString(R.string.search_finded_msg) + distance + meas + " " + getString(R.string.search_finded_msg) + " " + searchName + " ";
 
                     if (myAdapter.getEvents().size() > 0) {
                         txt_Status.setText(StatusMessage);
@@ -361,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
             }.execute();
-        }else{
+        } else {
             GiveMeEventUtils.showMessage(this, null, getString(R.string.no_internet_msg));
         }
     }
@@ -473,7 +490,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void requestLocation() {
         if (locManager.isLocationEnabled()) {
+            Looper looper = Looper.myLooper();
             locManager.getLocation(locListener);
+//            requestingUpdates = true;
+            Handler handler = new Handler(looper);
+//            handler.postDelayed(new Runnable() {
+//                public void run() {
+//                    locManager.removeUpdates(locListener);
+//                    if (requestingUpdates) {
+//                        GiveMeEventUtils.showMessage(MainActivity.this, "Event", "WORKING");
+//                    }
+//                    requestingUpdates = false;
+//                }
+//            }, 60000);
         } else {
             GiveMeEventUtils.showYesNoDialog(this, getString(R.string.app_name), getString(R.string.location_active_msg),
                     new DialogInterface.OnClickListener() {
@@ -489,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void manageLoginAction() {
 
         if (FacebookGraphManager.isLogged()) {
-            loginButton.setVisibility(View.GONE);
+            findViewById(R.id.login_content).setVisibility(View.GONE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
             navigationView.getMenu().findItem(R.id.action_search).setEnabled(true);
             navigationView.getMenu().findItem(R.id.nav_favorites).setEnabled(true);
@@ -514,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
         } else {
-            loginButton.setVisibility(View.VISIBLE);
+            findViewById(R.id.login_content).setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
             navigationView.getMenu().findItem(R.id.action_search).setEnabled(false);
             navigationView.getMenu().findItem(R.id.nav_favorites).setEnabled(false);
@@ -525,6 +554,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             findViewById(R.id.bottomBar).setVisibility(View.GONE);
             progressBarFind.setVisibility(View.GONE);
             txt_Status.setVisibility(View.GONE);
+            evQuant.setText(0 + " " + getString(R.string.search_founded_msg));
         }
 
     }
@@ -685,11 +715,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myAdapter.addEvents(facebookEvents);
                     txt_Status.setText(getString(R.string.suggest_label));
                     if (myAdapter.getItemCount() > 1)
-                        evQuant.setText(myAdapter.getItemCount() + " " + "Events Founded");
+                        evQuant.setText(myAdapter.getItemCount() + " " + getString(R.string.search_founded_msg));
                     if (myAdapter.getItemCount() > 1)
-                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Events Founded");
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + getString(R.string.search_founded_msg));
                     else
-                        evQuant.setText(" " + myAdapter.getItemCount() + " " + "Event Founded");
+                        evQuant.setText(" " + myAdapter.getItemCount() + " " + getString(R.string.search_founded_single_msg));
                 } else {
                     GiveMeEventUtils.showMessage(MainActivity.this, null, getString(R.string.no_suggest_msg));
                 }

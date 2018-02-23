@@ -11,9 +11,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
+
+import it.unical.givemeevents.R;
+import it.unical.givemeevents.util.GiveMeEventUtils;
 
 /**
  * Created by Yelena on 17/12/2017.
@@ -43,6 +47,7 @@ public class CustomLocationManager extends Service {
                             LocationManager.GPS_PROVIDER,
                             2 * 20 * 1000,
                             500, listener);
+//                    locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, listener, null);
                     if (locManager != null) {
                         mylocation = locManager
                                 .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -61,7 +66,8 @@ public class CustomLocationManager extends Service {
                 mylocation = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             }
         } catch (SecurityException e) {
-            Toast.makeText(mActivity, "You must Grant the Permissions", Toast.LENGTH_LONG).show();
+            GiveMeEventUtils.showToast(mActivity, R.string.grant_location_permission);
+//            Toast.makeText(mActivity, mActivity.getString(R.string.grant_location_permission), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             throw e;
         }
@@ -95,33 +101,33 @@ public class CustomLocationManager extends Service {
     }
 
 
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity);
-
-        // Setting Dialog Title
-        alertDialog.setTitle("Location Settings");
-
-        // Setting Dialog Message
-        alertDialog.setMessage("Location is not enabled. Do you want to go to settings menu?");
-
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mActivity.startActivity(intent);
-            }
-        });
-
-        // on pressing cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        // Showing Alert Message
-        alertDialog.show();
-    }
+//    public void showSettingsAlert() {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity);
+//
+//        // Setting Dialog Title
+//        alertDialog.setTitle("Location Settings");
+//
+//        // Setting Dialog Message
+//        alertDialog.setMessage("Location is not enabled. Do you want to go to settings menu?");
+//
+//        // On pressing Settings button
+//        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                mActivity.startActivity(intent);
+//            }
+//        });
+//
+//        // on pressing cancel button
+//        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//
+//        // Showing Alert Message
+//        alertDialog.show();
+//    }
 
 //    @Override
 //    public void onLocationChanged(final Location location) {

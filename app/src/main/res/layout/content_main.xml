@@ -24,8 +24,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.2"></include>
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+    <FrameLayout
+        android:id="@+id/login_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -38,7 +38,28 @@
         app:layout_constraintHorizontal_bias="0.557"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.537" />
+        app:layout_constraintVertical_bias="0.537">
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/login_button_support"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="#416BC1"
+            android:paddingBottom="5dp"
+            android:paddingEnd="6dp"
+            android:paddingStart="6dp"
+            android:paddingTop="5dp"
+            android:text="@string/fb_button"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_light" />
+    </FrameLayout>
+
 
     <include
         layout="@layout/bottom_bar_layout"
@@ -74,9 +95,9 @@
         android:layout_marginTop="8dp"
         android:ellipsize="marquee"
         android:fadingEdge="horizontal"
-        android:gravity="center_vertical|center_horizontal"
-
         android:fontFamily="sans-serif-condensed"
+
+        android:gravity="center_vertical|center_horizontal"
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
         android:singleLine="true"
