@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         isLargeLayout = getResources().getBoolean(R.bool.large_layout);
+        searchName = getString(R.string.search_current_location_msg);
         ///////////////////////MENU AND TOOLBAR//////////////////////////////
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,7 +130,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        searchName = getString(R.string.search_current_location_msg);
+        //////PUTTING CORRECTLY THE MENU ITEM ICON//////
+        MenuItem item = navigationView.getMenu().findItem(R.id.nav_view_events);
+        if (item != null) {
+            boolean land = GiveMeEventUtils.getPreferences(MainActivity.this).getBoolean(getString(R.string.is_events_landscape), false);
+            if (land) {
+                item.setIcon(R.drawable.ic_view_events_horizontal);
+            } else {
+                item.setIcon(R.drawable.ic_view_events_vertical);
+            }
+        }
         ////////////////////////////////////////////////////////
 
         ////////////////////FACEBOOK LOGIN///////////////////////
@@ -440,6 +450,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             openFilterSearch();
         } else if (id == R.id.nav_favorites) {
             showFavorites(null);
+        } else if (id == R.id.nav_view_events) {
+            boolean land = GiveMeEventUtils.getPreferences(MainActivity.this).getBoolean(getString(R.string.is_events_landscape), true);
+            if (land) {
+                item.setIcon(R.drawable.ic_view_events_vertical);
+                GiveMeEventUtils.setPreference(MainActivity.this, getString(R.string.is_events_landscape), false);
+                //////CHANGE RECYCLER VIEW LAYOUT/////////
+
+            } else {
+                item.setIcon(R.drawable.ic_view_events_horizontal);
+                GiveMeEventUtils.setPreference(MainActivity.this, getString(R.string.is_events_landscape), true);
+                //////CHANGE RECYCLER VIEW LAYOUT/////////
+            }
+//            showFavorites(null);
         } else if (id == R.id.nav_logout) {
             if (FacebookGraphManager.isLogged()) {
                 GiveMeEventUtils.showYesNoDialog(this, getString(R.string.app_name), getString(R.string.fb_logout_msg),
