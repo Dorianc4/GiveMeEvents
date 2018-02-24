@@ -131,15 +131,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //////PUTTING CORRECTLY THE MENU ITEM ICON//////
-        MenuItem item = navigationView.getMenu().findItem(R.id.nav_view_events);
-        if (item != null) {
-            boolean land = GiveMeEventUtils.getPreferences(MainActivity.this).getBoolean(getString(R.string.is_events_landscape), false);
-            if (land) {
-                item.setIcon(R.drawable.ic_view_events_horizontal);
-            } else {
-                item.setIcon(R.drawable.ic_view_events_vertical);
-            }
-        }
         ////////////////////////////////////////////////////////
 
         ////////////////////FACEBOOK LOGIN///////////////////////
@@ -198,7 +189,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
         }
         else{
-            myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
+            MenuItem item = navigationView.getMenu().findItem(R.id.nav_view_events);
+            if (item != null) {
+                boolean land = GiveMeEventUtils.getPreferences(MainActivity.this).getBoolean(getString(R.string.is_events_landscape), false);
+                if (land) {
+                    item.setIcon(R.drawable.ic_view_events_horizontal);
+                    myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
+                } else {
+                    item.setIcon(R.drawable.ic_view_events_vertical);
+                    myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
+                }
+            }
         }
 
         myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), this);
@@ -456,11 +457,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 item.setIcon(R.drawable.ic_view_events_vertical);
                 GiveMeEventUtils.setPreference(MainActivity.this, getString(R.string.is_events_landscape), false);
                 //////CHANGE RECYCLER VIEW LAYOUT/////////
-
+                myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
             } else {
                 item.setIcon(R.drawable.ic_view_events_horizontal);
                 GiveMeEventUtils.setPreference(MainActivity.this, getString(R.string.is_events_landscape), true);
                 //////CHANGE RECYCLER VIEW LAYOUT/////////
+                myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
             }
 //            showFavorites(null);
         } else if (id == R.id.nav_logout) {
