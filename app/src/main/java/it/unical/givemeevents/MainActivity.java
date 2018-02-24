@@ -456,11 +456,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 item.setIcon(R.drawable.ic_view_events_vertical);
                 GiveMeEventUtils.setPreference(MainActivity.this, getString(R.string.is_events_landscape), false);
                 //////CHANGE RECYCLER VIEW LAYOUT/////////
+                myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
 
             } else {
                 item.setIcon(R.drawable.ic_view_events_horizontal);
                 GiveMeEventUtils.setPreference(MainActivity.this, getString(R.string.is_events_landscape), true);
                 //////CHANGE RECYCLER VIEW LAYOUT/////////
+                myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
             }
 //            showFavorites(null);
         } else if (id == R.id.nav_logout) {
