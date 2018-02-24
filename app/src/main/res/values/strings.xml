@@ -91,6 +91,8 @@
     <string name="suggest_msg">Suggest events</string>
     <string name="no_suggest_msg">We are sorry to tell you tha we don\'t know much about you to suggest you any event</string>
     <string name="logout_label_msg">Logout</string>
+    <string name="events_view_label_msg">Events view orientation</string>
+    <string name="is_events_landscape">is_events_landscape</string>
     <string name="favorites_msg">Favorites Places</string>
     <string name="location_active_msg">Location service not active. Do you want to active it?</string>
     <string name="distance_label">Distance</string>
