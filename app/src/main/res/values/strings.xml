@@ -89,7 +89,7 @@
     <string name="my_location_msg">My location</string>
     <string name="search_msg">Filter Search</string>
     <string name="suggest_msg">Suggest events</string>
-    <string name="no_suggest_msg">We are sorry to tell you tha we don\'t know much about you to suggest you any event</string>
+    <string name="no_suggest_msg">We are sorry to tell you that we don\'t know much about you to suggest you any event</string>
     <string name="logout_label_msg">Logout</string>
     <string name="favorites_msg">Favorites Places</string>
     <string name="location_active_msg">Location service not active. Do you want to active it?</string>

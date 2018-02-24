@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.location.LocationListener;
@@ -182,7 +183,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
         ////////////////////////RECYCLE VIEW///////////////////////////////////
         myRecycle = (RecyclerView) findViewById(R.id.cardView);
-        myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
+
+        if (getResources().getBoolean(R.bool.large_layout) == true){
+            myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
+        }
+        else{
+            myRecycle.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false));
+        }
+
         myAdapter = new RecycleViewAdapter(new ArrayList<FacebookEvent>(), this);
         myRecycle.setAdapter(myAdapter);
         myAdapter.setOnItemClickListener(new RecycleViewAdapter.OnItemClickListener() {
@@ -555,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             textViewNameAccount.setText(getString(R.string.app_name));
             findViewById(R.id.bottomBar).setVisibility(View.GONE);
             progressBarFind.setVisibility(View.GONE);
-            txt_Status.setVisibility(View.GONE);
+            txt_Status.setVisibility(View.INVISIBLE);
             evQuant.setText(0 + " " + getString(R.string.search_founded_msg));
         }
 
@@ -654,7 +662,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onPreExecute() {
                 super.onPreExecute();
                 progressBarFind.setVisibility(View.VISIBLE);
-                txt_Status.setVisibility(View.GONE);
+                txt_Status.setVisibility(View.INVISIBLE);
             }
 
             @Override
