@@ -59,6 +59,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 public class FilterSearchDialog extends DialogFragment implements View.OnClickListener,
         GoogleApiClient.OnConnectionFailedListener {
 
+    private GraphSearchData searchData;
     private int distance;
     private Date sinceD;
     private Date untilD;
@@ -86,13 +87,10 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
 
     public static FilterSearchDialog newInstance() {
         FilterSearchDialog frag = new FilterSearchDialog();
-//        Bundle args = new Bundle();
-//        args.putInt("title", title);
-//        frag.setArguments(args);
         return frag;
     }
 
-    private void populateFields(GraphSearchData searchData) {
+    private void populateFields() {
         if (searchData != null) {
             if (searchData.getSince() != null) {
                 since.setText(GiveMeEventUtils.createStringfromDate(searchData.getSince(), "dd/MM/yyyy"));
@@ -119,6 +117,12 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                     break;
                 case 10000:
                     spinner.setSelection(4, true);
+                    break;
+                case 15000:
+                    spinner.setSelection(5, true);
+                    break;
+                case 20000:
+                    spinner.setSelection(6, true);
                     break;
                 default:
                     spinner.setSelection(0, true);
@@ -188,39 +192,38 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_dialog_search);
         toolbar.setTitle(getActivity().getString(R.string.search_msg));
-//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//        ActionBar actionbar =  ((AppCompatActivity)getActivity()).getSupportActionBar();
-//        if(actionbar!=null){
-//            actionbar.setDisplayHomeAsUpEnabled(true);
-//            actionbar.setHomeButtonEnabled(true);
-//            actionbar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
-//        }
-        GraphSearchData searchData = (GraphSearchData) getArguments().getSerializable("search");
-        populateFields(searchData);
+        searchData = (GraphSearchData) getArguments().getSerializable("search");
+        //
+        if (searchData == null) {
+            searchData = new GraphSearchData();
+        }
+        populateFields();
         toolbar.inflateMenu(R.menu.search_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.id_find_menu) {
                     Log.d("CLICKMENU", item.getItemId() + "");
-                    GraphSearchData gsd = new GraphSearchData();
-                    gsd.setDistance(distance);
-                    gsd.setSince(sinceD);
-                    gsd.setUntil(untilD);
+//                    GraphSearchData gsd = new GraphSearchData();
+                    searchData.setDistance(distance);
+                    searchData.setSince(sinceD);
+                    searchData.setUntil(untilD);
                     if (myPlace != null) {
                         double latitude = myPlace.getCoordinates().latitude;
                         double longitude = myPlace.getCoordinates().longitude;
-                        gsd.setLatitud(latitude);
-                        gsd.setLongitud(longitude);
-                        gsd.setName(myPlace.getName());
+                        searchData.setLatitud(latitude);
+                        searchData.setLongitud(longitude);
+                        searchData.setName(myPlace.getName());
+                    } else {
+                        searchData.setName(null);
                     }
                     if (!categories.isEmpty()) {
-                        gsd.setCategories(categories.toArray(new String[categories.size()]));
+                        searchData.setCategories(categories.toArray(new String[categories.size()]));
                     } else {
-                        gsd.setCategories(categoriesAux);
+                        searchData.setCategories(categoriesAux);
                     }
-                    gsd.setOnMyFavorites(onMyFavoritesCheck.isChecked());
-                    ((MainActivity) getActivity()).performExternal(gsd);
+                    searchData.setOnMyFavorites(onMyFavoritesCheck.isChecked());
+                    ((MainActivity) getActivity()).performExternal(searchData);
                     dismiss();
                 }
                 return false;
@@ -255,6 +258,12 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                         break;
                     case 4:
                         distance = 10000;
+                        break;
+                    case 5:
+                        distance = 15000;
+                        break;
+                    case 6:
+                        distance = 20000;
                         break;
                     default:
                         distance = 500;

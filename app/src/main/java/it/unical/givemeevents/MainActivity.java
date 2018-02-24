@@ -281,13 +281,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void performExternal(GraphSearchData graph) {
         if (graph != null) {
-            if (graph.getLongitud() == 0 && graph.getLatitud() == 0) {
-                graph.setLongitud(gsd.getLongitud());
-                graph.setLatitud(gsd.getLatitud());
-                searchName = getString(R.string.search_current_location_msg);
-                gsd.setName(searchName);
+//            if (graph.getLongitud() == 0 && graph.getLatitud() == 0) {
+//                graph.setLongitud(gsd.getLongitud());
+//                graph.setLatitud(gsd.getLatitud());
+//                searchName = getString(R.string.search_current_location_msg);
+//                gsd.setName(searchName);
+//            }
+            if (gsd.getName() != null) {
+                searchName = gsd.getName();
             }
-            searchName = gsd.getName();
             gsd = graph;
             perform();
         }
@@ -367,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     int distance = gsd.getDistance();
                     String meas = "m";
 
-                    String StatusMessage = getString(R.string.search_finded_msg) + distance + meas + " " + getString(R.string.search_finded_msg) + " " + searchName + " ";
+                    String StatusMessage = getString(R.string.search_finded_msg) + " " + distance + meas + " " + getString(R.string.search_around_msg) + " " + searchName + " ";
 
                     if (myAdapter.getEvents().size() > 0) {
                         txt_Status.setText(StatusMessage);

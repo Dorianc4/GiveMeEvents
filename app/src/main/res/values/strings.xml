@@ -78,14 +78,14 @@
     <string name="permission_denied">Permission denied</string>
     <string name="prefs_name">it.unical.givemeevents.Shared_Preferences</string>
     <string name="last_location">lastLocation</string>
-    <string name="grant_location_permission">You must Ggrant the the location permissions</string>
+    <string name="grant_location_permission">You must grant the the location permissions</string>
     <string name="search_current_location_msg">your current location.</string>
     <string name="search_founded_msg">Events Founded</string>
     <string name="search_founded_single_msg">Event Founded</string>
     <string name="search_finded_msg">Displaying events finded </string>
     <string name="search_around_msg">around</string>
     <string name="no_internet_msg">You don\'t have internet connection, please connect your device and try again</string>
-    <string name="search_favorites_msg">your favorites places.</string>
+    <string name="search_favorites_msg"> your favorites places.</string>
     <string name="my_location_msg">My location</string>
     <string name="search_msg">Filter Search</string>
     <string name="suggest_msg">Suggest events</string>
@@ -101,6 +101,8 @@
         <item>3 KM</item>
         <item>5 KM</item>
         <item>10 KM</item>
+        <item>15 KM</item>
+        <item>20 KM</item>
     </string-array>
     <string-array name="fb_graph_categories_filter">
         <item>Arts &amp; Entertaiment</item>
