@@ -64,7 +64,6 @@ public class FacebookGraphManager {
                 .build();
 
         graphService = retrofit.create(FacebookGraphServices.class);
-//        AccessToken accessToken = new AccessToken(ctx.getString(R.string.facebooc_access_token))
     }
 
     private String getBaseUrl() {
@@ -106,7 +105,6 @@ public class FacebookGraphManager {
         /*///////////////////////REQUEST EXECUTION///////////////////////*/
         GraphRequest request = GraphRequest.newGraphPathRequest(AccessToken.getCurrentAccessToken(), ctx.getString(R.string.fb_graph_url_search), null);
         request.setParameters(params);
-//        Log.d("GRAPHPATH", request.getVersion());
         /*///////////////////////ADDING THE IDS TO THE LIST//////////////*/
         do {
             GraphResponse resp = request.executeAndWait();

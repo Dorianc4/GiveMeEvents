@@ -78,13 +78,6 @@ public class FavoritesDialog extends DialogFragment {
         Toolbar toolbar = view.findViewById(R.id.toolbar_dialog_favorites);
         toolbar.setTitle(getActivity().getString(R.string.favorites_msg));
 
-//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//        ActionBar actionbar =  ((AppCompatActivity)getActivity()).getSupportActionBar();
-//        if(actionbar!=null){
-//            actionbar.setDisplayHomeAsUpEnabled(true);
-//            actionbar.setHomeButtonEnabled(true);
-//            actionbar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
-//        }
         toolbar.inflateMenu(R.menu.favorite_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -109,43 +102,6 @@ public class FavoritesDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        return super.onCreateDialog(savedInstanceState);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        View view = getActivity().getLayoutInflater().inflate(R.layout.search_filter_dialog, null);
-//
-//        SeekBar seek = view.findViewById(R.id.seekBarDistance);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            seek.setMin(500);
-//        }
-//        final TextView distanceText = view.findViewById(R.id.textViewDistanceValue);
-//        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-//                distanceText.setText(i + "mts");
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//            }
-//        });
-//
-//
-//        builder.setView(view);
-//        builder.setTitle(R.string.search_msg);
-//        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                // FIRE ZE MISSILES!
-//            }
-//        }).setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                // User cancelled the dialog
-//            }
-//        });
-//        // Create the AlertDialog object and return it
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
