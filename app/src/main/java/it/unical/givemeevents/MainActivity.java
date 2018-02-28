@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
-        updateFavorites();
         super.onResume();
+        updateFavorites();
     }
 
     @Override
@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         isLargeLayout = getResources().getBoolean(R.bool.large_layout);
         searchName = getString(R.string.search_current_location_msg);
         ///////////////////////MENU AND TOOLBAR//////////////////////////////
@@ -805,5 +807,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 }

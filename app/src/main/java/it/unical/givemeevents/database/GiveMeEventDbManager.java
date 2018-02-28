@@ -166,7 +166,7 @@ public class GiveMeEventDbManager {
     }
 
     public boolean existFavPlace(String id) {
-        SQLiteDatabase db = openhelper.getWritableDatabase();
+        SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null || id == "0") {
             return false;
         }

@@ -83,7 +83,8 @@ public class FavoritesDialog extends DialogFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.ok_favorite_menu) {
-                    dismiss();
+//                    dismiss();
+                    getActivity().onBackPressed();
                 }
                 return false;
             }

@@ -224,7 +224,8 @@ public class FilterSearchDialog extends DialogFragment implements View.OnClickLi
                     }
                     searchData.setOnMyFavorites(onMyFavoritesCheck.isChecked());
                     ((MainActivity) getActivity()).performExternal(searchData);
-                    dismiss();
+//                    dismiss();
+                    getActivity().onBackPressed();
                 }
                 return false;
             }
