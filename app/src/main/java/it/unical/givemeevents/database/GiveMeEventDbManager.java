@@ -26,6 +26,7 @@ public class GiveMeEventDbManager {
         openhelper = new GiveMeEventsDbHelper(context);
     }
 
+//lista de lugares favoritos
     public List<EventPlace> getAllFavPlaces() {
         SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null) {
@@ -49,7 +50,7 @@ public class GiveMeEventDbManager {
         db.close();
         return eventList;
     }
-
+//dame un lugar favorito
     public ContentValues getFavPlace(long id) {
         SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null) {
@@ -72,7 +73,7 @@ public class GiveMeEventDbManager {
         db.close();
         return row;
     }
-
+//adiciona un lugar de evento favorito
     public long addFavPlace(EventPlace place) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null && place == null) {
@@ -93,7 +94,7 @@ public class GiveMeEventDbManager {
         db.close();
         return id;
     }
-
+//add un lugar de facebook favorito
     public long addFavPlaceOwner(FacebookPlace place) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null && place == null) {
@@ -114,7 +115,7 @@ public class GiveMeEventDbManager {
         db.close();
         return id;
     }
-
+//adiciona o remplaza un lugar favorito
     public long addorReplaceFavPlace(EventPlace place) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null || place == null) {
@@ -135,7 +136,7 @@ public class GiveMeEventDbManager {
         db.close();
         return id;
     }
-
+//eliminar un evento favorito
     public void deleteFavEvent(long id) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null) {
@@ -144,7 +145,7 @@ public class GiveMeEventDbManager {
         db.delete(PlaceDbContract.PlaceEntry.TABLE_NAME, PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(id)});
         db.close();
     }
-
+//actualizr un lugar
     public void update(EventPlace place) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null || place == null) {
@@ -164,7 +165,7 @@ public class GiveMeEventDbManager {
         db.update(PlaceDbContract.PlaceEntry.TABLE_NAME, row, PlaceDbContract.PlaceEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(place.getId())});
         db.close();
     }
-
+//verifica si un lugar ya esta como favorito
     public boolean existFavPlace(String id) {
         SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null || id == "0") {
@@ -182,7 +183,7 @@ public class GiveMeEventDbManager {
         db.close();
         return flag;
     }
-
+//si esta la actualiza si no la adiciona tazas de un lugar y la hora
     public long addorReplaceTrace(String id_place, String time) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null || id_place == null || time == null) {
@@ -195,7 +196,7 @@ public class GiveMeEventDbManager {
         db.close();
         return id;
     }
-
+//dame todas las trazas
     public Cursor getAllTraces() {
         SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null) {
@@ -203,7 +204,7 @@ public class GiveMeEventDbManager {
         }
         return db.rawQuery("select * from " + TraceDbContract.TraceEntry.TABLE_NAME, null);
     }
-
+//dame todas las categorias
     public Cursor getAllTraceCategories() {
         SQLiteDatabase db = openhelper.getReadableDatabase();
         if (db == null) {
@@ -211,7 +212,7 @@ public class GiveMeEventDbManager {
         }
         return db.rawQuery("select * from " + GiveMeEventsDbHelper.CATEGORY_TRACE_TABLE_NAME, null);
     }
-
+//adiciona o remplaz
     public long addorReplaceTraceCategory(String id_category) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null || id_category == null) {
@@ -223,7 +224,7 @@ public class GiveMeEventDbManager {
         db.close();
         return id;
     }
-
+//si esta lo actualiza si no esta lo inserta
     public void addorReplaceCategoryTrace(Category[] categories) {
         SQLiteDatabase db = openhelper.getWritableDatabase();
         if (db == null || categories == null) {
@@ -234,7 +235,7 @@ public class GiveMeEventDbManager {
         }
         db.close();
     }
-
+//lista de las categorias mas visitadas
     public List<String> getCategoriesMostVisited() {
 
         SQLiteDatabase db = openhelper.getReadableDatabase();
@@ -250,7 +251,7 @@ public class GiveMeEventDbManager {
         db.close();
         return ids;
     }
-
+//lista de lugares lugares mas visitado
     public List<String> getPlacesMostVisited() {
 
         SQLiteDatabase db = openhelper.getReadableDatabase();
@@ -266,7 +267,7 @@ public class GiveMeEventDbManager {
         db.close();
         return ids;
     }
-
+//horario preferido por el usuario para visitar eventos
     public int getTimeMostCommon() {
 
         SQLiteDatabase db = openhelper.getReadableDatabase();

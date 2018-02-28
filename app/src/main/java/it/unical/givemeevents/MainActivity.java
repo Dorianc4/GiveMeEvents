@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 protected void onPreExecute() {
                     super.onPreExecute();
                     progressBarFind.setVisibility(View.VISIBLE);
-                    txt_Status.setVisibility(View.GONE);
+                    txt_Status.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         txt_Status.setSelected(true);
                         txt_Status.setVisibility(View.VISIBLE);
                     } else {
-                        txt_Status.setVisibility(View.GONE);
+                        txt_Status.setVisibility(View.INVISIBLE);
                     }
                 }
             }.execute();
