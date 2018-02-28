@@ -47,12 +47,14 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:background="@null"
                 android:hint="Enter Address, City or ZIP Code"
                 android:imeOptions="actionSearch"
                 android:inputType="textAutoComplete"
-                android:textAlignment="center"
-                android:textColor="@color/common_google_signin_btn_text_dark_focused"
-                android:textColorHint="@color/com_facebook_button_background_color_disabled"
+                android:popupBackground="@android:color/white"
+                android:textAlignment="textStart"
+                android:textColor="#000"
+                android:textColorHint="@android:color/transparent"
                 android:textSize="15sp" />
         </RelativeLayout>
 
@@ -159,7 +161,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextSince" />
 
-
+            s
 
             <CheckBox
                 android:id="@+id/checkBox"
